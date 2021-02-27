@@ -1,10 +1,33 @@
 {
-  "sfx":
+  "game":
   {
-    "player_shot": "res/sfx/player_gun.wav"
+    "ready":
+    [
+      [1, "res/sfx/game/ready.wav"]
+    ]
   },
-  "music":
+  "player_soldier":
   {
-
+    "shot":
+    [
+      [0.4,"res/sfx/player/shot_0.wav"]
+    ],
+    "hurt":
+    [
+      [0.4,"res/sfx/player/hurt_0.wav"]
+    ]
+  },
+  "knifer":
+  {
+    "slash":
+    [
+      [0.4, "res/sfx/common/slash_0.wav"]
+    ],
+    "death":
+    [
+      [0.4, "res/sfx/common/death_0.wav"],
+      [0.4, "res/sfx/common/death_1.wav"],
+      [0.4, "res/sfx/common/death_2.wav"]
+    ]
   }
 }

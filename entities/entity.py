@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import data
 import var
@@ -28,6 +30,7 @@ class Entity:
         if self.hp <= 0:
             var.points += self.points
             entity_list.remove(self)
+            random.choice(data.audio[self.type]["death"]).play()
 
     def get_position(self):
         return self.box.x, self.box.y

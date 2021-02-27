@@ -1,3 +1,5 @@
+import random
+
 import data
 from entities.dynamic.dynamic import Dynamic
 import dymond
@@ -135,12 +137,12 @@ class Player(Dynamic):
                 proj_list.append(dymond.create_projectile("bullet", pos[0] - 8, pos[1] + 12, 4, 4, 10, 20, 180))
             else:
                 proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 12, 4, 4, 10, 20, 0))
-            data.audio["player_shot"].play()
+            random.choice(data.audio[self.type]["shot"]).play()
 
     def take_damage(self, damage: int):
         if not self.god_mode and self.immunity_frames == 0:
             self.hp -= damage
-            data.audio["player_hurt"].play()
+            random.choice(data.audio[self.type]["hurt"]).play()
             self.immunity_frames = self.IMMUNITY_FRAMES
 
     def collision_handler(self, coll):

@@ -38,7 +38,7 @@ class Game:
 
         self.change_map()  # Se carga un mapa
         data.animations = dymond.load_animations("info/animation_loader_info.json")  # Cargamos base de animaciones
-        dymond.load_audio()  # Se carga el audio
+        data.audio = dymond.load_audio("info/audio_loader_info.json")  # Se carga el audio
 
     def change_map(self):
         self.has_changed_level = True
@@ -100,6 +100,9 @@ class Game:
         back = pygame.Surface((500, 350))
         offset = 0
         percent = int(frames*0.15)
+        pygame.mixer.music.load(random.choice(self.tile_map.music_tracks))
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play()
         while timer > 0:
             self.frame.blit(self.previous_frame, (0, 0))
             back.fill((0, 0, 0))
@@ -113,7 +116,7 @@ class Game:
                                                  "white"), (120, 160))
             self.display.blit(pygame.transform.scale(self.frame, var.RES), (0, 0))
             if timer == 100:
-                data.audio["ready"].play()
+                random.choice(data.audio["game"]["ready"]).play()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -121,9 +124,6 @@ class Game:
             pygame.display.update()
             self.clock.tick(var.CLK_TICKS)
             timer -= 1
-        pygame.mixer.music.load(random.choice(self.tile_map.music_tracks))
-        pygame.mixer.music.set_volume(0.1)
-        pygame.mixer.music.play()
 
     def scroll(self, player):
         player_pos = player.get_position()

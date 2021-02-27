@@ -176,23 +176,24 @@ def load_animations(json_path: str):
     return animation_data
 
 
-def load_audio():
-    player_shot = pygame.mixer.Sound('res/sfx/player_gun.wav')
-    player_shot.set_volume(0.5)
-    player_hurt = pygame.mixer.Sound('res/sfx/player_hurt.wav')
-    player_hurt.set_volume(0.5)
-    knife_slash = pygame.mixer.Sound('res/sfx/knife_slash.wav')
-    knife_slash.set_volume(0.3)
-    ready = pygame.mixer.Sound('res/sfx/ready.wav')
-    ready.set_volume(0.5)
-    data.audio = {
-        "player_shot": player_shot,
-        "player_hurt": player_hurt,
-        "knife_slash": knife_slash,
-        "ready": ready
-    }
-    pygame.mixer.pre_init(44100, -16, 2, 512)
-    pygame.mixer.set_num_channels(64)
+def load_audio(json_path: str):
+    audio_data = {}
+    f = open(json_path, 'r')
+    audio_loader_info = json.load(f)
+    f.close()
+    for entity_type in audio_loader_info:
+        entity_audio_data = audio_loader_info[entity_type]
+        loaded_audio = {}
+        for audio in entity_audio_data:
+            sound_info = entity_audio_data[audio]
+            loaded_sounds = []
+            for sound in sound_info:
+                sfx = pygame.mixer.Sound(sound[1])
+                sfx.set_volume(sound[0])
+                loaded_sounds.append(sfx)
+            loaded_audio[audio] = loaded_sounds
+        audio_data[entity_type] = loaded_audio
+    return audio_data
 
 
 def createMap(map_name: str):

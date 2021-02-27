@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 import data
@@ -89,7 +91,7 @@ class Enemy_Melee(Dynamic):
     def start_attack(self, player):
         frames_halt = 60 / self.rof
         if self.rof_timer % frames_halt == 0:
-            data.audio["knife_slash"].play()
+            random.choice(data.audio[self.type]["slash"]).play()
             self.set_action("ATTACKING")
             self.action_timer = 60/self.rof
             player.take_damage(self.damage)
