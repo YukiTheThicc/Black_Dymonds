@@ -21,6 +21,7 @@ class Entity:
         self.current_frame = None  # Current frame to blit
         self.action = "IDLE"  # Current state of the entity
         self.is_facing_left = False
+        self.is_facing_up = False
 
     def take_damage(self, damage: int):
         if not self.god_mode:
@@ -86,7 +87,7 @@ class Entity:
                 self.this_frame_index = 0
             else:
                 self.this_frame_index = len(frame_data)
-        self.current_frame = pygame.transform.flip(self.current_frame, self.is_facing_left, False)
+        self.current_frame = pygame.transform.flip(self.current_frame, self.is_facing_left, self.is_facing_up)
 
     def draw(self, frame, scroll):
         """

@@ -18,6 +18,17 @@
       [8, "res/spr/test/action_1/action_1_1.png"]
     ]
   },
+  "flash": {
+    "FIRING":
+    [
+      [1, "res/spr/flash/firing_0.png"],
+      [1, "res/spr/flash/firing_1.png"],
+      [1, "res/spr/flash/firing_2.png"],
+      [1, "res/spr/flash/firing_3.png"],
+      [1, "res/spr/flash/firing_4.png"],
+      [1, "res/spr/flash/firing_5.png"]
+    ]
+  },
   "player_soldier":
   {
     "IDLE":

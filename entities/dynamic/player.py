@@ -1,5 +1,7 @@
 import random
 
+import pygame
+
 import data
 from entities.dynamic.dynamic import Dynamic
 import dymond
@@ -8,7 +10,7 @@ import dymond
 class Player(Dynamic):
     """
 
-    Clase del avatar que controla el jugador. Aviso para navegantes: se va a usar POO como base de
+    Clase del avatar que controla el jugador. Aviso para navegantes: se va a usar POO como base wde
     de todas las clases instanciables que hagamos.
 
     Constantes de la clase jugador:
@@ -29,7 +31,8 @@ class Player(Dynamic):
         self.immunity_frames = 0
         self.step_timer = 0
         self.states = {"IDLE": True, "RUNNING_RIGHT": False, "RUNNING_LEFT": False, "JUMPING": False, "AIR_TIME": False,
-                       "LANDING": False, "AIMING_UP": False, "SHOOTING": False}
+                       "LANDING": False, "AIMING_UP": False, "SHOOTING": False, "IS_SHOOTING": False}
+        self.flash = dymond.create_entity("flash", self.box.x, self.box.y, 8, 8, 0, True)
 
     def internal_action_setter(self):
         if abs(self.vel[0]) <= 0.2 and abs(self.vel[1]) <= 0.2:
@@ -131,13 +134,29 @@ class Player(Dynamic):
     def shoot(self, proj_list):
         frames_halt = 60 / self.rof
         if self.rof_timer % frames_halt == 0:
+            self.states["IS_SHOOTING"] = True
+            self.flash.set_action("FIRING")
+            self.flash.is_facing_up = False
             pos = self.get_position()
             if self.states["AIMING_UP"]:
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + 4, pos[1] + 8, 4, 4, 10, 20, 270))
+                if self.is_facing_left:
+                    off_pos = [pos[0] + 10, pos[1] - 16]
+                    x_offset = 10
+                else:
+                    off_pos = [pos[0] + 6, pos[1] - 16]
+                    x_offset = 6
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 20, 270))
+                self.flash.set_position(off_pos)
             elif self.is_facing_left:
-                proj_list.append(dymond.create_projectile("bullet", pos[0] - 8, pos[1] + 12, 4, 4, 10, 20, 180))
+                off_pos = [pos[0] - 16, pos[1] + 4]
+                self.flash.set_position(off_pos)
+                self.flash.is_facing_left = True
+                proj_list.append(dymond.create_projectile("bullet", pos[0], pos[1] + 10, 4, 4, 10, 20, 180))
             else:
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 12, 4, 4, 10, 20, 0))
+                off_pos = [pos[0] + 32, pos[1] + 4]
+                self.flash.set_position(off_pos)
+                self.flash.is_facing_left = False
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 10, 4, 4, 10, 20, 0))
             random.choice(data.audio[self.type]["shot"]).play()
 
     def take_damage(self, damage: int):
@@ -164,6 +183,14 @@ class Player(Dynamic):
 
     def draw(self, frame, scroll):
         self.animate(True)
+        if self.states["IS_SHOOTING"]:
+            self.flash.animate(True)
+            if self.states["AIMING_UP"]:
+                angle = 90
+                if self.flash.is_facing_left:
+                    angle = -90
+                self.flash.current_frame = pygame.transform.rotate(self.flash.current_frame, angle)
+            frame.blit(self.flash.current_frame, (self.flash.box.x - scroll[0] - 6, self.flash.box.y - scroll[1]))
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 6, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list):
@@ -176,6 +203,7 @@ class Player(Dynamic):
         :return:
 
         """
+        self.states["IS_SHOOTING"] = False
         coll = self.move(tile_list)
         self.collision_handler(coll)
         self.internal_action_setter()

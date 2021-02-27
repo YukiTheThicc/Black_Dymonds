@@ -71,31 +71,17 @@ class Game:
             self.entity_list.append(dymond.create_knifer((to_x, to_y), self.difficulty_multi))
 
     def end_level_transition(self):
-        timer = frames
+        fade_in_timer = 120
+        fade_out_timer = 120
         back = pygame.Surface((500, 350))
         offset = 0
-        percent = int(frames * 0.15)
-        while timer > 0:
-            self.frame.blit(self.previous_frame, (0, 0))
-            back.fill((0, 0, 0))
-            back.set_colorkey(var.COLOR_KEY)
-            self.frame.blit(pygame.transform.rotate(back, 75), (offset - 460, -91))
-            if timer > (frames - percent) or timer < percent:
-                offset += 10
-            else:
-                self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
-                self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)), "BIG",
-                                                 "white"), (120, 160))
-            self.display.blit(pygame.transform.scale(self.frame, var.RES), (0, 0))
-            if timer == 100:
-                data.audio["ready"].play()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+        percent = int(fade_in_timer * 0.15)
+        not_finished = True
+        while not_finished:
+            while fade_in_timer > 0:
+                fade_in_timer -= 1
             pygame.display.update()
             self.clock.tick(var.CLK_TICKS)
-            timer -= 1
 
     def new_level_transition(self, frames):
         timer = frames
@@ -114,8 +100,8 @@ class Game:
                 offset += 10
             else:
                 self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
-                self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)), "BIG",
-                                                 "white"), (120, 160))
+                self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)) + "s",
+                                                 "BIG", "white"), (120, 160))
             self.display.blit(pygame.transform.scale(self.frame, var.RES), (0, 0))
             if timer == 100:
                 random.choice(data.audio["game"]["ready"]).play()
