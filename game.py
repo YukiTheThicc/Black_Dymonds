@@ -47,9 +47,10 @@ class Game:
         self.player.states["AIMING_UP"] = False
         self.player.states["SHOOTING"] = False
         self.difficulty_multi = 1 + 0.1 * self.level
-        self.time_left = 10 + 2 * self.level
+        self.time_left = 60 + 2 * self.level
         self.level += 1
         self.tile_map = dymond.createMap(random.choice(self.map_list))
+        self.tile_map.choose_tile_map()
         self.true_scroll = [0, 0]
         self.entity_list = []
         self.proj_list = []
@@ -120,6 +121,9 @@ class Game:
             pygame.display.update()
             self.clock.tick(var.CLK_TICKS)
             timer -= 1
+        pygame.mixer.music.load(random.choice(self.tile_map.music_tracks))
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play()
 
     def scroll(self, player):
         player_pos = player.get_position()
@@ -152,6 +156,9 @@ class Game:
         if len(self.entity_list) == 0 or self.time_left <= 0:
             self.change_map()
 
+    def player_death(self):
+        pass
+
     def exit_game(self):
         self.running = False
 
@@ -175,6 +182,7 @@ class Game:
 
     @staticmethod
     def pause_menu(player):
+        pygame.mixer.music.pause()
         player.states["RUNNING_RIGHT"] = False
         player.states["RUNNING_LEFT"] = False
         player.is_shooting = False
@@ -187,6 +195,7 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.unpause()
                         paused = False
 
     @staticmethod

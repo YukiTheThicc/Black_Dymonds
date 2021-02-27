@@ -28,7 +28,7 @@ class Enemy_Melee(Dynamic):
         if self.action_timer == 0:
             if abs(self.vel[0]) < 1 and abs(self.vel[1]) < 1:
                 self.set_action("IDLE")
-            elif abs(self.vel[1]) > 0.5:
+            elif abs(self.vel[1]) > 0.4:
                 self.set_action("AIR_TIME")
             elif self.vel[0] > 0:
                 self.set_action("MOVING_RIGHT")

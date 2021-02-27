@@ -2,7 +2,7 @@ from maps.layer_obj import *
 import pygame
 
 
-class Parallax4:
+class Parallax:
     """
     A simple parallax object that holds a static background, and a undefined amount of dynamic parallax layers.
 

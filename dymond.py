@@ -4,7 +4,7 @@ import pygame
 
 from entities import entity, projectile
 from entities.dynamic import player, dynamic, enemy_melee
-from maps import tile_map
+from maps import scenario
 import var
 import data
 
@@ -196,7 +196,7 @@ def load_audio():
 
 
 def createMap(map_name: str):
-    new_map = tile_map.TileMap()
+    new_map = scenario.Scenario()
     f = open("info/maps/" + map_name + ".json", 'r')
     map_info = json.load(f)
     f.close()
@@ -220,7 +220,7 @@ def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: fl
 
     if time <= 0:
         time = 0
-    frame.blit(text_data(round(time, 3), "BIG", "black"), (420, 4))
+    frame.blit(text_data(str(round(time, 3)) + "s", "BIG", "black"), (420, 4))
     frame.blit(text_data(str(points) + "p", "BIG", "black"), (420, 20))
 
     if player_health <= 0:
