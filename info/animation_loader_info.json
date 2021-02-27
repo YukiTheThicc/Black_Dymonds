@@ -1,0 +1,74 @@
+{
+  "test":
+  {
+    "IDLE":
+    [
+      [2, "res/spr/test/idle/idle_0.png"],
+      [2, "res/spr/test/idle/idle_1.png"],
+      [3, "res/spr/test/idle/idle_2.png"],
+      [4, "res/spr/test/idle/idle_3.png"],
+      [5, "res/spr/test/idle/idle_4.png"],
+      [6, "res/spr/test/idle/idle_5.png"],
+      [7, "res/spr/test/idle/idle_6.png"],
+      [8, "res/spr/test/idle/idle_7.png"]
+    ],
+    "ACTION_1":
+    [
+      [8, "res/spr/test/action_1/action_1_0.png"],
+      [8, "res/spr/test/action_1/action_1_1.png"]
+    ]
+  },
+  "player_soldier":
+  {
+    "IDLE":
+    [
+      [10, "res/spr/player/soldier/idle/idle_0.png"],
+      [10, "res/spr/player/soldier/idle/idle_1.png"],
+      [10, "res/spr/player/soldier/idle/idle_2.png"],
+      [10, "res/spr/player/soldier/idle/idle_3.png"]
+    ],
+    "IDLE_UP":
+    [
+      [10, "res/spr/player/soldier/idle_up/idle_up_0.png"],
+      [10, "res/spr/player/soldier/idle_up/idle_up_1.png"],
+      [10, "res/spr/player/soldier/idle_up/idle_up_2.png"],
+      [10, "res/spr/player/soldier/idle_up/idle_up_3.png"]
+    ],
+    "RUN":
+    [
+      [8, "res/spr/player/soldier/run/run_0.png"],
+      [8, "res/spr/player/soldier/run/run_1.png"],
+      [8, "res/spr/player/soldier/run/run_2.png"],
+      [8, "res/spr/player/soldier/run/run_3.png"]
+    ],
+    "RUN_UP":
+    [
+      [8, "res/spr/player/soldier/run_up/run_up_0.png"],
+      [8, "res/spr/player/soldier/run_up/run_up_1.png"],
+      [8, "res/spr/player/soldier/run_up/run_up_2.png"],
+      [8, "res/spr/player/soldier/run_up/run_up_3.png"]
+    ],
+    "JUMPING":
+    [
+      [5, "res/spr/player/soldier/jump/jump_0.png"]
+    ],
+    "JUMPING_UP":
+    [
+      [5, "res/spr/player/soldier/jump_up/jump_up_0.png"]
+    ],
+    "AIR_TIME":
+    [
+      [8, "res/spr/player/soldier/air/air_0.png"],
+      [8, "res/spr/player/soldier/air/air_1.png"],
+      [8, "res/spr/player/soldier/air/air_2.png"],
+      [8, "res/spr/player/soldier/air/air_3.png"]
+    ],
+    "AIR_TIME_UP":
+    [
+      [8, "res/spr/player/soldier/air_up/air_up_0.png"],
+      [8, "res/spr/player/soldier/air_up/air_up_1.png"],
+      [8, "res/spr/player/soldier/air_up/air_up_2.png"],
+      [8, "res/spr/player/soldier/air_up/air_up_3.png"]
+    ]
+  }
+}

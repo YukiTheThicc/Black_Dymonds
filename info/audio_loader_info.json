@@ -1,0 +1,10 @@
+{
+  "sfx":
+  {
+    "player_shot": "res/sfx/player_gun.wav"
+  },
+  "music":
+  {
+
+  }
+}
