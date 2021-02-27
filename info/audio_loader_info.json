@@ -10,7 +10,7 @@
   {
     "shot":
     [
-      [0.4,"res/sfx/player/shot_0.wav"]
+      [0.3,"res/sfx/player/shot_0.wav"]
     ],
     "hurt":
     [
@@ -21,7 +21,7 @@
   {
     "slash":
     [
-      [0.4, "res/sfx/common/slash_0.wav"]
+      [0.3, "res/sfx/common/slash_0.wav"]
     ],
     "death":
     [

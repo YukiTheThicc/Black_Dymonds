@@ -1,5 +1,4 @@
 import json
-
 import pygame
 
 from entities import entity, projectile
@@ -136,7 +135,7 @@ def create_enemy_melee(pl_type: str, pos: [int, int], hp: int, max_speed: [int, 
 
 
 def create_knifer(pos: [int, int], difficulty_multi: float):
-    return enemy_melee.Enemy_Melee('knifer', pos, 50, (3, 12), 2, (0.2, 0), 8, 2, 24, 10, difficulty_multi, 100)
+    return enemy_melee.Enemy_Melee('knifer', pos, 50, (3, 12), 2, (0.2, 0), 8, 2, 16, 10, difficulty_multi, 100)
 
 
 # ENTITY CREATORS END---------------------------------------------------------------------------------------------------
@@ -196,7 +195,7 @@ def load_audio(json_path: str):
     return audio_data
 
 
-def createMap(map_name: str):
+def create_scenario(map_name: str):
     new_map = scenario.Scenario()
     f = open("info/maps/" + map_name + ".json", 'r')
     map_info = json.load(f)

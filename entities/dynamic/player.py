@@ -27,6 +27,7 @@ class Player(Dynamic):
         self.rof_timer = 0
         self.action_delay = 0
         self.immunity_frames = 0
+        self.step_timer = 0
         self.states = {"IDLE": True, "RUNNING_RIGHT": False, "RUNNING_LEFT": False, "JUMPING": False, "AIR_TIME": False,
                        "LANDING": False, "AIMING_UP": False, "SHOOTING": False}
 

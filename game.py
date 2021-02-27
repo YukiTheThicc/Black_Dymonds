@@ -24,16 +24,17 @@ class Game:
         self.frame = pygame.Surface(var.FRAME_SIZE)  # Frame donde se va a dibujar
 
         self.previous_frame = None
-        self.map_list = ["andula_desert"]  # Lista de mapas
+        self.scenarios = ["andula_desert"]  # Lista de mapas
         self.entity_list = []  # Lista de entidades
         self.proj_list = []  # Lista de proyectiles
         self.player = dymond.create_player('player_soldier', (0, 0), 100, (5, 12), 2, (0.12, 0), 10, 10, True, False)
         self.time_left = 0
-        self.tile_map = None  # Mapa del nivel
+        self.scenario = None  # Mapa del nivel
         self.true_scroll = [0, 0]  # Scroll (con valores decimales)
         self.clock = pygame.time.Clock()  # Reloj
         self.has_changed_level = True
         self.difficulty_multi = 0
+        self.levels_per_scenario = 5
         self.level = 0
 
         self.change_map()  # Se carga un mapa
@@ -41,6 +42,8 @@ class Game:
         data.audio = dymond.load_audio("info/audio_loader_info.json")  # Se carga el audio
 
     def change_map(self):
+        if self.level % self.levels_per_scenario == 0:
+            self.scenario = dymond.create_scenario(random.choice(self.scenarios))
         self.has_changed_level = True
         self.player.states["RUNNING_RIGHT"] = False
         self.player.states["RUNNING_LEFT"] = False
@@ -49,23 +52,22 @@ class Game:
         self.difficulty_multi = 1 + 0.1 * self.level
         self.time_left = 60 + 2 * self.level
         self.level += 1
-        self.tile_map = dymond.createMap(random.choice(self.map_list))
-        self.tile_map.choose_tile_map()
+        self.scenario.choose_tile_map()
         self.true_scroll = [0, 0]
         self.entity_list = []
         self.proj_list = []
-        self.player.set_position(self.tile_map.player_spawn)
+        self.player.set_position(self.scenario.player_spawn)
         self.spawn_entities()
 
     def spawn_entities(self):
-        max_range = self.tile_map.length * self.tile_map.TILE_SIZE[0]
+        max_range = self.scenario.length * self.scenario.TILE_SIZE[0]
         enemies_to_spawn = round(10 * self.difficulty_multi)
         for i in range(enemies_to_spawn):
-            to_x = random.randint(8 * self.tile_map.TILE_SIZE[0] + 256, max_range)
+            to_x = random.randint(8 * self.scenario.TILE_SIZE[0] + 256, max_range)
             to_y = 32
-            while self.tile_map.check_collision((to_x, to_y), (32, 32)):
+            while self.scenario.check_collision((to_x, to_y), (32, 32)):
                 to_y += 32
-                to_x = random.randint(8 * self.tile_map.TILE_SIZE[0] + 256, max_range)
+                to_x = random.randint(8 * self.scenario.TILE_SIZE[0] + 256, max_range)
             self.entity_list.append(dymond.create_knifer((to_x, to_y), self.difficulty_multi))
 
     def end_level_transition(self):
@@ -100,7 +102,7 @@ class Game:
         back = pygame.Surface((500, 350))
         offset = 0
         percent = int(frames*0.15)
-        pygame.mixer.music.load(random.choice(self.tile_map.music_tracks))
+        pygame.mixer.music.load(random.choice(self.scenario.music_tracks))
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play()
         while timer > 0:
@@ -125,6 +127,9 @@ class Game:
             self.clock.tick(var.CLK_TICKS)
             timer -= 1
 
+    def scenario_transition(self):
+        pass
+
     def scroll(self, player):
         player_pos = player.get_position()
         self.true_scroll[0] += (player_pos[0] - self.true_scroll[0] - var.CAMERA_OFFSET[0]) / 6
@@ -136,7 +141,7 @@ class Game:
 
     def draw(self):
         scroll = self.scroll(self.player)
-        self.tile_map.render(self.frame, scroll)
+        self.scenario.render(self.frame, scroll)
         for obj in self.entity_list:
             obj.draw(self.frame, scroll)
         for proj in self.proj_list:
@@ -146,11 +151,11 @@ class Game:
                                                   var.points, self.player.hp, True, True)
 
     def update(self):
-        self.player.update(self.player, self.tile_map.collision_boxes, self.entity_list, self.proj_list)
+        self.player.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list)
         for proj in self.proj_list:
-            proj.update(self.tile_map.collision_boxes, self.entity_list, self.proj_list)
+            proj.update(self.scenario.collision_boxes, self.entity_list, self.proj_list)
         for obj in self.entity_list:
-            obj.update(self.player, self.tile_map.collision_boxes, self.entity_list, self.proj_list)
+            obj.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list)
 
     def check_end_level(self):
         if len(self.entity_list) == 0 or self.time_left <= 0:
