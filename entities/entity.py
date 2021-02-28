@@ -97,7 +97,7 @@ class Entity:
             if loop:
                 self.this_frame_index = 0
             else:
-                self.this_frame_index = len(frame_data)
+                self.this_frame_index = len(frame_data) - 1
         self.current_frame = pygame.transform.flip(self.current_frame, self.is_facing_left, self.is_facing_up)
 
     def draw(self, frame, scroll):

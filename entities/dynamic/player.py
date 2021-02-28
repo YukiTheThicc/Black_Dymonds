@@ -79,19 +79,14 @@ class Player(Dynamic):
     def run_right(self):
         if self.is_facing_left:
             self.is_facing_left = False
-        if abs(self.vel[0]) < self.max_speed[0]:
+        if self.vel[0] < self.max_speed[0]:
             self.vel[0] += self.acc
 
     def run_left(self):
         if not self.is_facing_left:
             self.is_facing_left = True
-        if abs(self.vel[0]) < self.max_speed[0]:
+        if self.vel[0] > -self.max_speed[0]:
             self.vel[0] -= self.acc
-            if not self.states["AIR_TIME"] and not self.states["JUMPING"]:
-                if self.states["AIMING_UP"]:
-                    self.set_action("RUN_UP")
-                else:
-                    self.set_action("RUN")
 
     def start_jump(self):
         if self.air_time < self.GRACE_FRAMES and not self.states["AIR_TIME"]:

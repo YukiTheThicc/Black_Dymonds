@@ -1,7 +1,5 @@
 import random
 
-import pygame
-
 import data
 from entities.dynamic.dynamic import Dynamic
 
@@ -14,8 +12,8 @@ class Enemy_Melee(Dynamic):
     GRACE_FRAMES = 8
 
     def __init__(self, e_type: str, pos: [int, int], hp: int, max_speed: [int, int], acc: float,
-                 friction: [float, float], j_strength: int, rof: int, m_range: int, damage: int, dif_multi: float,
-                 points: [int], has_mass=True, god_mode=False):
+                 friction: [float, float], j_strength: int, rof: int, m_range: int, follow_range: int, damage: int,
+                 dif_multi: float, points: [int], has_mass=True, god_mode=False):
         super().__init__(e_type, pos, self.HITBOX_SIZE, round(hp * dif_multi), max_speed, friction, True, has_mass,
                          god_mode)
         self.acc = acc
@@ -24,20 +22,25 @@ class Enemy_Melee(Dynamic):
         self.rof_timer = 0
         self.action_timer = 0
         self.range = m_range
+        self.follow_range = follow_range
         self.distance_to_player = 0
-        self.damage = round(damage * dif_multi)
-        self.points = round(points * dif_multi)
+        self.damage = int(damage * dif_multi)
+        self.points = int(points * dif_multi)
 
     def internal_action_setter(self):
         if self.action_timer == 0:
-            if abs(self.vel[0]) < 1 and abs(self.vel[1]) < 1:
-                self.set_action("IDLE")
-            elif abs(self.vel[1]) > 0.4:
+            if self.vel[1] > 0.4 or self.vel[1] < -0.4:
                 self.set_action("AIR_TIME")
             elif self.vel[0] > 0:
-                self.set_action("MOVING_RIGHT")
+                if self.is_facing_left:
+                    self.is_facing_left = False
+                self.set_action("RUN")
             elif self.vel[0] < 0:
-                self.set_action("MOVING_LEFT")
+                if not self.is_facing_left:
+                    self.is_facing_left = True
+                self.set_action("RUN")
+            else:
+                self.set_action("IDLE")
 
     def action_handler(self, player):
         self.follow_player(player)
@@ -79,12 +82,12 @@ class Enemy_Melee(Dynamic):
         if self.action_timer == 0:
             player_pos = player.get_position()
             my_pos = self.get_position()
-            if 10 < self.distance_to_player < 256:
+            if 10 < self.distance_to_player < self.follow_range:
                 if player_pos[0] > my_pos[0]:
                     self.accelerate([2, 0])
                 elif player_pos[0] < my_pos[0]:
                     self.accelerate([-2, 0])
-            if self.distance_to_player < 128 and player_pos[1] < my_pos[1] - 64:
+            if self.distance_to_player < 64 and player_pos[1] < my_pos[1] - 64:
                 self.start_jump()
             if self.distance_to_player <= self.range:
                 self.start_attack(player)
@@ -104,24 +107,17 @@ class Enemy_Melee(Dynamic):
         self.rof_timer += 1
 
     def draw(self, frame, scroll):
-        if self.action == "IDLE":
-            pygame.draw.rect(frame, (0, 0, 0), pygame.Rect(self.box.x - scroll[0],
-                                                           self.box.y - scroll[1], 32, 32))
-        elif self.action == "MOVING_RIGHT":
-            pygame.draw.rect(frame, (200, 0, 0), pygame.Rect(self.box.x - scroll[0],
-                                                             self.box.y - scroll[1], 32, 32))
-        elif self.action == "MOVING_LEFT":
-            pygame.draw.rect(frame, (0, 0, 200), pygame.Rect(self.box.x - scroll[0],
-                                                             self.box.y - scroll[1], 32, 32))
-        elif self.action == "JUMPING":
-            pygame.draw.rect(frame, (200, 200, 0), pygame.Rect(self.box.x - scroll[0],
-                                                               self.box.y - scroll[1], 32, 32))
-        elif self.action == "AIR_TIME":
-            pygame.draw.rect(frame, (0, 200, 0), pygame.Rect(self.box.x - scroll[0],
-                                                             self.box.y - scroll[1], 32, 32))
-        elif self.action == "ATTACKING":
-            pygame.draw.rect(frame, (200, 0, 200), pygame.Rect(self.box.x - scroll[0],
-                                                               self.box.y - scroll[1], 32, 32))
+        """
+
+        :param frame:
+        :param scroll:
+        :return:
+        """
+        if self.action == "ATTACKING":
+            self.animate(False)
+        else:
+            self.animate(True)
+        frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         self.distance_to_player = self.distance_to_point(player.box.center)
@@ -130,5 +126,3 @@ class Enemy_Melee(Dynamic):
             coll = self.move(tile_list)
             self.collision_handler(coll)
             self.action_handler(player)
-
-

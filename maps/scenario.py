@@ -103,7 +103,7 @@ class Scenario:
         f.close()
         data = data.split('\n')
         row = data[0]
-        self.length = len(row) - 8
+        self.length = len(row) - 10
         for row in data:
             self.tile_map.append(row)
         f = open("res/scenarios/" + self.id + "/maps/" + map_name + "/bkg_tile_map.txt", 'r')
@@ -133,7 +133,7 @@ class Scenario:
         self.collision_boxes = []
         return False
 
-    def render(self, frame: pygame.Surface, scroll: [int, int]):
+    def render(self, frame: pygame.Surface, scroll: [int, int], player):
         self.collision_boxes = []
         self.background.render(frame, scroll)
         y = 0
@@ -150,21 +150,17 @@ class Scenario:
         for row in self.tile_map:
             x = 0
             for column in row:
-                # Si el valor en la columna actual del mapa de tiles es distinto de 0,
-                # el tile no es 'aire', y se transforma en un int para transformarlo
-                # directamente en un indice del set de tiles
                 if column != '0':
-                    # Dibujamos el tile correspondiente (-1 porque el set de tiles empieza en
+                    box = pygame.Rect(x * self.TILE_SIZE[0], y * self.TILE_SIZE[1], self.TILE_SIZE[0],
+                                      self.TILE_SIZE[1])
                     # 0 pero en el archivo el valor 0 se reserva para el aire)
-                    if column != 'w':
-                        frame.blit(self.tile_set[column],
-                                   (x * self.TILE_SIZE[0] - scroll[0],
-                                    y * self.TILE_SIZE[1] - scroll[1]))
-                    # Le asignamos una hitbox al tile
-                    if column not in self.non_collision_group:
-                        self.collision_boxes.append(pygame.Rect(x * self.TILE_SIZE[0],
-                                                                y * self.TILE_SIZE[1],
-                                                                self.TILE_SIZE[0],
-                                                                self.TILE_SIZE[1]))
+                    if player.distance_to_point(box.center) < 512:
+                        if column != 'w':
+                            frame.blit(self.tile_set[column],
+                                       (x * self.TILE_SIZE[0] - scroll[0],
+                                        y * self.TILE_SIZE[1] - scroll[1]))
+                        # Le asignamos una hitbox al tile
+                        if column not in self.non_collision_group:
+                            self.collision_boxes.append(box)
                 x += 1
             y += 1

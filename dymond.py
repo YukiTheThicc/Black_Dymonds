@@ -109,32 +109,8 @@ def create_player(pl_type: str, pos: [int, int], hp: int, max_speed: [int, int],
     return player.Player(pl_type, pos, hp, max_speed, acc, friction, j_strength, rof, has_mass, god_mode)
 
 
-def create_enemy_melee(pl_type: str, pos: [int, int], hp: int, max_speed: [int, int], acc: float, friction: float,
-                       j_strength: int, rof: int, m_range: int, points: int, has_mass=True, god_mode=False):
-    """
-
-    Creates a player entity (will be composed of multiple sprites) and returns it.
-    :param m_range:
-    :param points:
-    :param pl_type: String to identify what sprite to be drawn
-    :param pos: Tuple of the position of the player
-    :param hp: Health points of the player
-    :param max_speed: Tuple with the maximum speed on each axis for the player
-    :param friction: Friction of the player (how fast it slows down)
-    :param acc: Acceleration on the x axis
-    :param j_strength: Strength of the jump
-    :param rof: Rate of fire of the player (shots per second, might be changed if weapons are added)
-    :param has_mass: Affected by gravity -> True
-    :param god_mode: Can't take damage -> True
-    :return:
-
-    """
-    return enemy_melee.Enemy_Melee(pl_type, pos, hp, max_speed, acc, friction, j_strength, rof, m_range, has_mass,
-                                   god_mode, points)
-
-
 def create_knifer(pos: [int, int], difficulty_multi: float):
-    return enemy_melee.Enemy_Melee('knifer', pos, 50, (3, 12), 2, (0.2, 0), 8, 2, 16, 10, difficulty_multi, 100)
+    return enemy_melee.Enemy_Melee('knifer', pos, 50, (3, 12), 2, (0.2, 0), 8, 2, 16, 192, 10, difficulty_multi, 100)
 
 
 def create_pickable(p_type: str, pos: [int, int]):
@@ -211,7 +187,7 @@ def load_drop_chances(json_path: str):
 
 def create_scenario(map_name: str):
     new_map = scenario.Scenario()
-    f = open("info/maps/" + map_name + ".json", 'r')
+    f = open("info/scenarios/" + map_name + ".json", 'r')
     map_info = json.load(f)
     f.close()
     new_map.load(map_info)

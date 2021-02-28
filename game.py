@@ -69,7 +69,8 @@ class Game:
             to_y = 0
             while not self.scenario.check_collision((to_x, to_y), (32, 32)):
                 to_y += 32
-            self.entity_list.append(dymond.create_knifer((to_x, to_y-33), self.difficulty_multi))
+            print(str(to_x) + " " + str(to_y))
+            self.entity_list.append(dymond.create_knifer((to_x-32, to_y-32), self.difficulty_multi))
 
     def end_level_transition(self):
         fade_in_timer = 120
@@ -128,7 +129,7 @@ class Game:
 
     def draw(self):
         scroll = self.scroll(self.player)
-        self.scenario.render(self.frame, scroll)
+        self.scenario.render(self.frame, scroll, self.player)
         for obj in self.entity_list:
             obj.draw(self.frame, scroll)
         for proj in self.proj_list:
