@@ -36,7 +36,6 @@ class Game:
         self.difficulty_multi = 0
         self.levels_per_scenario = 5
         self.level = 0
-
         self.change_map()  # Se carga un mapa
         data.animations = dymond.load_animations("info/animation_loader_info.json")  # Cargamos base de animaciones
         data.audio = dymond.load_audio("info/audio_loader_info.json")  # Se carga el audio
@@ -60,15 +59,13 @@ class Game:
         self.spawn_entities()
 
     def spawn_entities(self):
-        max_range = self.scenario.length * self.scenario.TILE_SIZE[0]
         enemies_to_spawn = round(10 * self.difficulty_multi)
         for i in range(enemies_to_spawn):
-            to_x = random.randint(8 * self.scenario.TILE_SIZE[0] + 256, max_range)
-            to_y = 32
-            while self.scenario.check_collision((to_x, to_y), (32, 32)):
+            to_x = self.scenario.get_tile_size()[0] * random.randint(8 + 8, self.scenario.length)
+            to_y = 0
+            while not self.scenario.check_collision((to_x, to_y), (32, 32)):
                 to_y += 32
-                to_x = random.randint(8 * self.scenario.TILE_SIZE[0] + 256, max_range)
-            self.entity_list.append(dymond.create_knifer((to_x, to_y), self.difficulty_multi))
+            self.entity_list.append(dymond.create_knifer((to_x, to_y-33), self.difficulty_multi))
 
     def end_level_transition(self):
         fade_in_timer = 120

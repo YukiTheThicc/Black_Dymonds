@@ -2,7 +2,7 @@ from entities.entity import *
 from data_types import Vector2
 
 
-class Projectile():
+class Projectile:
     """
     """
     def __init__(self, p_type: str, pos_x: int, pos_y: int, x: int, y: int, speed: float, angle: int, dam: int):

@@ -1,7 +1,7 @@
 import json
 import pygame
 
-from entities import entity, projectile
+from entities import entity, projectile, pickable
 from entities.dynamic import player, dynamic, enemy_melee
 from maps import scenario
 import var
@@ -23,7 +23,7 @@ def create_variables():
     """
     var.FRAME_SIZE = (480, 270)
     var.RES = (1600, 900)
-    var.CAMERA_OFFSET = (224, 150)
+    var.CAMERA_OFFSET = (224, 182)
     var.COLOR_KEY = (0, 255, 0)
     var.TIMER = 0
     var.CLK_TICKS = 60
@@ -136,6 +136,10 @@ def create_enemy_melee(pl_type: str, pos: [int, int], hp: int, max_speed: [int, 
 
 def create_knifer(pos: [int, int], difficulty_multi: float):
     return enemy_melee.Enemy_Melee('knifer', pos, 50, (3, 12), 2, (0.2, 0), 8, 2, 16, 10, difficulty_multi, 100)
+
+
+def create_sh_boost(pos: [int, int]):
+    return pickable.Pickable('sh_boost', [16, 16], pos, 10, (3, 12), 2, (0.2, 0), 8, 2)
 
 
 # ENTITY CREATORS END---------------------------------------------------------------------------------------------------

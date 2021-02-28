@@ -28,12 +28,12 @@ class Scenario:
         self.background = None  # Fondo del escenario
         self.player_spawn = []  # Posicion de aparicion del jugador en el escenario
         self.music_tracks = []  # Pistas de musica que usa el escenario
-        self.length = 0  # Longitud (en pixeles) del escenario
+        self.length = 0  # Longitud (en tiles) del escenario
 
     # CLASS METHODS BEGIN-----------------------------------------------------------------------------------------------
 
     @classmethod
-    def get_size(cls):
+    def get_tile_size(cls):
         """
 
         Recoge la tupla que indica el tamaño de los tiles del mapa
@@ -43,7 +43,7 @@ class Scenario:
         return cls.TILE_SIZE
 
     @classmethod
-    def set_size(cls, size: [int, int]):
+    def set_tile_size(cls, size: [int, int]):
         """
 
         Pone el tamaño de tile del escenario al valor que se le pase

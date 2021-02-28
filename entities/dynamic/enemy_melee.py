@@ -23,6 +23,7 @@ class Enemy_Melee(Dynamic):
         self.rof_timer = 0
         self.action_timer = 0
         self.range = m_range
+        self.distance_to_player = 0
         self.damage = round(damage * dif_multi)
         self.points = round(points * dif_multi)
 
@@ -77,15 +78,14 @@ class Enemy_Melee(Dynamic):
         if self.action_timer == 0:
             player_pos = player.get_position()
             my_pos = self.get_position()
-            dis_to_player = self.distance_to_point(player.box.center)
-            if 10 < dis_to_player < 256:
+            if 10 < self.distance_to_player < 256:
                 if player_pos[0] > my_pos[0]:
                     self.accelerate([2, 0])
                 elif player_pos[0] < my_pos[0]:
                     self.accelerate([-2, 0])
-            if dis_to_player < 128 and player_pos[1] < my_pos[1] - 64:
+            if self.distance_to_player < 128 and player_pos[1] < my_pos[1] - 64:
                 self.start_jump()
-            if dis_to_player <= self.range:
+            if self.distance_to_player <= self.range:
                 self.start_attack(player)
 
     def start_attack(self, player):
@@ -123,9 +123,12 @@ class Enemy_Melee(Dynamic):
                                                                self.box.y - scroll[1], 32, 32))
 
     def update(self, player, tile_list, entity_list, proj_list):
-        self.check_health(entity_list)
-        coll = self.move(tile_list)
-        self.collision_handler(coll)
-        self.action_handler(player)
+        self.distance_to_player = self.distance_to_point(player.box.center)
+        if self.distance_to_player <= 320:
+            self.check_health(entity_list)
+            coll = self.move(tile_list)
+            self.collision_handler(coll)
+            self.action_handler(player)
+        print(self.get_position())
 
 
