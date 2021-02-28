@@ -25,6 +25,7 @@ class Game:
 
         self.previous_frame = None
         self.scenarios = ["andula_desert"]  # Lista de mapas
+        self.pickable_list = []
         self.entity_list = []  # Lista de entidades
         self.proj_list = []  # Lista de proyectiles
         self.player = dymond.create_player('player_soldier', (0, 0), 100, (5, 12), 2, (0.12, 0), 10, 10, True, False)
@@ -36,7 +37,9 @@ class Game:
         self.difficulty_multi = 0
         self.levels_per_scenario = 5
         self.level = 0
+
         self.change_map()  # Se carga un mapa
+        data.drop_chances = dymond.load_drop_chances("info/drop_chances_info.json")
         data.animations = dymond.load_animations("info/animation_loader_info.json")  # Cargamos base de animaciones
         data.audio = dymond.load_audio("info/audio_loader_info.json")  # Se carga el audio
 
@@ -53,6 +56,7 @@ class Game:
         self.level += 1
         self.scenario.choose_tile_map()
         self.true_scroll = [0, 0]
+        self.pickable_list = []
         self.entity_list = []
         self.proj_list = []
         self.player.set_position(self.scenario.player_spawn)
@@ -129,16 +133,22 @@ class Game:
             obj.draw(self.frame, scroll)
         for proj in self.proj_list:
             proj.draw(self.frame, scroll)
+        for pickable in self.pickable_list:
+            pickable.draw(self.frame, scroll)
         self.player.draw(self.frame, scroll)
         self.previous_frame = dymond.render_frame(self.display, self.frame, scroll, self.clock, self.time_left,
                                                   var.points, self.player.hp, True, True)
 
     def update(self):
-        self.player.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list)
+        self.player.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list,
+                           self.pickable_list)
         for proj in self.proj_list:
             proj.update(self.scenario.collision_boxes, self.entity_list, self.proj_list)
         for obj in self.entity_list:
-            obj.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list)
+            obj.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list, self.pickable_list)
+        for pickable in self.pickable_list:
+            pickable.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list,
+                            self.pickable_list)
 
     def check_end_level(self):
         if len(self.entity_list) == 0 or self.time_left <= 0:

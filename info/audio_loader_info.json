@@ -4,6 +4,10 @@
     "ready":
     [
       [1, "res/sfx/game/ready.wav"]
+    ],
+    "hp_up":
+    [
+      [0.5,"res/sfx/game/hp_up_0.wav"]
     ]
   },
   "player_soldier":

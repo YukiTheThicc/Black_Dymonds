@@ -24,9 +24,10 @@ class Projectile:
             if self.box.colliderect(box):
                 return True
         for entity in entity_list:
-            if self.box.colliderect(entity.box):
-                entity.take_damage(self.dam)
-                return True
+            if entity.collides_with_projectiles:
+                if self.box.colliderect(entity.box):
+                    entity.take_damage(self.dam)
+                    return True
 
     def move(self):
         """

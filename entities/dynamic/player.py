@@ -22,7 +22,7 @@ class Player(Dynamic):
 
     def __init__(self, e_type: str, pos: [int, int], hp: int, max_speed: [int, int],
                  acc: float, friction: [float, float], j_strength: int, rof: int, has_mass=True, god_mode=False):
-        super().__init__(e_type, pos, self.HITBOX_SIZE, hp, max_speed, friction, has_mass, god_mode)
+        super().__init__(e_type, pos, self.HITBOX_SIZE, hp, max_speed, friction, True, has_mass, god_mode)
         self.acc = acc
         self.j_spd = j_strength
         self.rof = rof
@@ -193,9 +193,10 @@ class Player(Dynamic):
             frame.blit(self.flash.current_frame, (self.flash.box.x - scroll[0] - 6, self.flash.box.y - scroll[1]))
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 6, self.box.y - scroll[1]))
 
-    def update(self, player, tile_list, entity_list, proj_list):
+    def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         """
 
+        :param pickable_list:
         :param player:
         :param tile_list:
         :param entity_list:

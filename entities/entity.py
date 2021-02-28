@@ -2,6 +2,7 @@ import random
 
 import pygame
 import data
+import dymond
 import var
 
 
@@ -10,16 +11,18 @@ class Entity:
 
     """
 
-    def __init__(self, e_type: str, pos_x: int, pos_y: int, x: int, y: int, hp: int, god_mode=False):
+    def __init__(self, e_type: str, pos_x: int, pos_y: int, x: int, y: int, hp: int, collides=True, god_mode=False):
         self.type = e_type  # Entity type; important for animations and state handlers
         self.box = pygame.Rect(pos_x, pos_y, x, y)  # Collider rectangle
         self.points = 0
-        self.hp = hp  # Entities health points
+        self.max_hp = hp
+        self.hp = self.max_hp  # Entities health points
         self.god_mode = god_mode  # True if the entity can't take damage
         self.frame_timer = 0  # Time spent doing one action
         self.this_frame_index = 0  # Current frame inside an animation
         self.current_frame = None  # Current frame to blit
         self.action = "IDLE"  # Current state of the entity
+        self.collides_with_projectiles = collides
         self.is_facing_left = False
         self.is_facing_up = False
 
@@ -27,11 +30,19 @@ class Entity:
         if not self.god_mode:
             self.hp -= damage
 
-    def check_health(self, entity_list):
+    def check_health(self, entity_list, pickable_list):
         if self.hp <= 0:
             var.points += self.points
             entity_list.remove(self)
             random.choice(data.audio[self.type]["death"]).play()
+            chance = random.randint(0, 100)
+            pickable = ""
+            for drop_item in data.drop_chances[self.type]:
+                if chance <= data.drop_chances[self.type][drop_item]:
+                    pickable = drop_item
+            new_pickable = dymond.create_pickable(pickable, self.get_position())
+            if new_pickable:
+                pickable_list.append(new_pickable)
 
     def get_position(self):
         return self.box.x, self.box.y
@@ -99,7 +110,7 @@ class Entity:
         self.animate(True)
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
-    def update(self, player, tile_list, entity_list, proj_list):
+    def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         self.check_coll(tile_list)
-        self.check_health(entity_list)
+        self.check_health(entity_list, pickable_list)
 

@@ -5,7 +5,6 @@ from entities import entity, projectile, pickable
 from entities.dynamic import player, dynamic, enemy_melee
 from maps import scenario
 import var
-import data
 
 """
     @Santiago Barreiro Chapela
@@ -138,8 +137,12 @@ def create_knifer(pos: [int, int], difficulty_multi: float):
     return enemy_melee.Enemy_Melee('knifer', pos, 50, (3, 12), 2, (0.2, 0), 8, 2, 16, 10, difficulty_multi, 100)
 
 
-def create_sh_boost(pos: [int, int]):
-    return pickable.Pickable('sh_boost', [16, 16], pos, 10, (3, 12), 2, (0.2, 0), 8, 2)
+def create_pickable(p_type: str, pos: [int, int]):
+    new_pos = [pos[0] + 16, pos[1] + 16]
+    if p_type == "sh_boost":
+        return pickable.HP_boost('sh_boost', new_pos, [16, 16], 10, (12, 12), (0.2, 0))
+    else:
+        return False
 
 
 # ENTITY CREATORS END---------------------------------------------------------------------------------------------------
@@ -197,6 +200,13 @@ def load_audio(json_path: str):
             loaded_audio[audio] = loaded_sounds
         audio_data[entity_type] = loaded_audio
     return audio_data
+
+
+def load_drop_chances(json_path: str):
+    f = open(json_path, 'r')
+    data = json.load(f)
+    f.close()
+    return data
 
 
 def create_scenario(map_name: str):

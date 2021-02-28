@@ -1,21 +1,16 @@
 {
-  "test":
+  "sh_boost":
   {
     "IDLE":
     [
-      [2, "res/spr/test/idle/idle_0.png"],
-      [2, "res/spr/test/idle/idle_1.png"],
-      [3, "res/spr/test/idle/idle_2.png"],
-      [4, "res/spr/test/idle/idle_3.png"],
-      [5, "res/spr/test/idle/idle_4.png"],
-      [6, "res/spr/test/idle/idle_5.png"],
-      [7, "res/spr/test/idle/idle_6.png"],
-      [8, "res/spr/test/idle/idle_7.png"]
-    ],
-    "ACTION_1":
-    [
-      [8, "res/spr/test/action_1/action_1_0.png"],
-      [8, "res/spr/test/action_1/action_1_1.png"]
+      [5, "res/spr/sh_boost/idle_0.png"],
+      [5, "res/spr/sh_boost/idle_1.png"],
+      [5, "res/spr/sh_boost/idle_2.png"],
+      [5, "res/spr/sh_boost/idle_3.png"],
+      [5, "res/spr/sh_boost/idle_4.png"],
+      [5, "res/spr/sh_boost/idle_5.png"],
+      [5, "res/spr/sh_boost/idle_6.png"],
+      [5, "res/spr/sh_boost/idle_7.png"]
     ]
   },
   "flash": {

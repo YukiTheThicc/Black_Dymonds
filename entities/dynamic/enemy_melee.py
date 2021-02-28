@@ -16,7 +16,8 @@ class Enemy_Melee(Dynamic):
     def __init__(self, e_type: str, pos: [int, int], hp: int, max_speed: [int, int], acc: float,
                  friction: [float, float], j_strength: int, rof: int, m_range: int, damage: int, dif_multi: float,
                  points: [int], has_mass=True, god_mode=False):
-        super().__init__(e_type, pos, self.HITBOX_SIZE, round(hp * dif_multi), max_speed, friction, has_mass, god_mode)
+        super().__init__(e_type, pos, self.HITBOX_SIZE, round(hp * dif_multi), max_speed, friction, True, has_mass,
+                         god_mode)
         self.acc = acc
         self.j_spd = j_strength
         self.rof = rof
@@ -122,13 +123,12 @@ class Enemy_Melee(Dynamic):
             pygame.draw.rect(frame, (200, 0, 200), pygame.Rect(self.box.x - scroll[0],
                                                                self.box.y - scroll[1], 32, 32))
 
-    def update(self, player, tile_list, entity_list, proj_list):
+    def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         self.distance_to_player = self.distance_to_point(player.box.center)
         if self.distance_to_player <= 320:
-            self.check_health(entity_list)
+            self.check_health(entity_list, pickable_list)
             coll = self.move(tile_list)
             self.collision_handler(coll)
             self.action_handler(player)
-        print(self.get_position())
 
 

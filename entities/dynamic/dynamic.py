@@ -13,8 +13,8 @@ class Dynamic(Entity):
     Y_GRAV = 0.4
 
     def __init__(self, e_type: str, pos: [int, int], size: [int, int], hp: int, max_speed: [int, int],
-                 friction: [float, float], has_mass=True, god_mode=False):
-        super().__init__(e_type, pos[0], pos[1], size[0], size[1], hp, god_mode)
+                 friction: [float, float], collides=True, has_mass=True, god_mode=False):
+        super().__init__(e_type, pos[0], pos[1], size[0], size[1], hp, collides, god_mode)
         self.has_mass = has_mass  # True if affected by gravity
         self.vel = [0.0, 0.0]  # Vector velocity of the entity
         self.friction = friction  # Friction on each axis
@@ -115,9 +115,10 @@ class Dynamic(Entity):
             # Collision top
             self.vel[1] = 0
 
-    def update(self, player, tile_list, entity_list, proj_list):
+    def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         """
         Updates the internal state of the entity.
+        :param pickable_list:
         :param player:
         :param entity_list:
         :param tile_list:

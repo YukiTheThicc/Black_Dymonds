@@ -103,7 +103,7 @@ class Scenario:
         f.close()
         data = data.split('\n')
         row = data[0]
-        self.length = len(row) - 16
+        self.length = len(row) - 8
         for row in data:
             self.tile_map.append(row)
         f = open("res/scenarios/" + self.id + "/maps/" + map_name + "/bkg_tile_map.txt", 'r')
