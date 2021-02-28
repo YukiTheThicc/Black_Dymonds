@@ -1,3 +1,4 @@
+import gc
 import random
 import time
 import pygame
@@ -86,6 +87,7 @@ class Game:
             self.clock.tick(var.CLK_TICKS)
 
     def new_level_transition(self, frames):
+        gc.collect()
         timer = frames
         back = pygame.Surface((500, 350))
         offset = 0
