@@ -3,7 +3,7 @@ import random
 import pygame
 
 import var
-from maps import parralax
+from maps import parralax, tile
 
 
 class Scenario:
@@ -26,7 +26,6 @@ class Scenario:
         self.bkg_tile_map = []  # Tiles de fondo del escenario
         self.non_collision_group = []  # Lista de tiles que no tienen caja de colisiones (en el mapa de tiles normal)
         self.collision_boxes = []  # Cajas de colision del escenario
-        self.current_collision_boxes = []
         self.background = None  # Fondo del escenario
         self.player_spawn = []  # Posicion de aparicion del jugador en el escenario
         self.music_tracks = []  # Pistas de musica que usa el escenario
@@ -122,42 +121,32 @@ class Scenario:
             x = 0
             for column in row:
                 if column != '0':
-                    box = pygame.Rect(x * self.TILE_SIZE[0], y * self.TILE_SIZE[1], self.TILE_SIZE[0],
-                                      self.TILE_SIZE[1])
-                    if column not in self.non_collision_group:
-                        self.collision_boxes.append(box)
+                    new_tile = tile.Tile(column, (x * self.TILE_SIZE[0], y * self.TILE_SIZE[1]), (self.TILE_SIZE[0],
+                                                                                                  self.TILE_SIZE[1]))
+                    self.tile_map.append(new_tile)
                 x += 1
             y += 1
-
-    def check_collision(self, pos: [int, int], size: [int, int]):
-        rect = pygame.Rect(pos, size)
-        for box in self.collision_boxes:
-            if rect.colliderect(box):
-                return True
-        return False
-
-    def render(self, frame: pygame.Surface, scroll: [int, int], player):
-        self.current_collision_boxes = []
-        self.background.render(frame, scroll)
-        for box in self.collision_boxes:
-            if player.distance_to_point(box.center) < self.TILE_SIZE[0] * 12:
-                self.current_collision_boxes.append(box)
         y = 0
         for row in self.bkg_tile_map:
             x = 0
             for column in row:
                 if column != '0':
-                    frame.blit(self.bkg_tile_set[column],
-                               (x * self.TILE_SIZE[0] - scroll[0],
-                                y * self.TILE_SIZE[1] - scroll[1]))
-                    # 0 pero en el archivo el valor 0 se reserva para el aire)
-                    if player.distance_to_point(box.center) < 512:
-                        if column != 'w':
-                            frame.blit(self.tile_set[column],
-                                       (x * self.TILE_SIZE[0] - scroll[0],
-                                        y * self.TILE_SIZE[1] - scroll[1]))
-                        # Le asignamos una hitbox al tile
-                        if column not in self.non_collision_group:
-                            self.collision_boxes.append(box)
+                    new_bkg_tile = tile.Tile(column, (x * self.TILE_SIZE[0], y * self.TILE_SIZE[1]),
+                                             (self.TILE_SIZE[0], self.TILE_SIZE[1]))
+                    self.bkg_tile_map.append(new_bkg_tile)
                 x += 1
             y += 1
+
+    def check_collision(self, pos: [int, int], size: [int, int]):
+        rect = pygame.Rect(pos, size)
+        for c_tile in self.tile_map:
+            if rect.colliderect(c_tile.box):
+                return True
+        return False
+
+    def render(self, frame: pygame.Surface, scroll: [int, int], player):
+        self.collision_boxes = []
+        self.background.render(frame, scroll)
+        for tile in self.collision_boxes:
+            if player.distance_to_point(tile.box.center) < self.TILE_SIZE[0] * 12:
+                self.collision_boxes.append(tile.box)

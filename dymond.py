@@ -3,7 +3,7 @@ import pygame
 
 from entities import entity, projectile, pickable
 from entities.dynamic import player, dynamic, enemy_melee
-from maps import scenario
+from maps import scenario, tile
 import var
 
 """
@@ -35,7 +35,6 @@ def create_variables():
 
 
 # ENTITY CREATORS BEGIN-------------------------------------------------------------------------------------------------
-
 
 def create_entity(e_type: str, pos_x: int, pos_y: int, x: int, y: int, hp: int, god_mode=False):
     """
