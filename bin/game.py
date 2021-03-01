@@ -4,6 +4,8 @@ import time
 import pygame
 import sys
 
+import main
+import metodos
 from bin import dymond, game_data
 
 
@@ -14,9 +16,9 @@ class Game:
     """
 
     # Constructor
-    def __init__(self, conf: {}):
+    def __init__(self, player: str, conf: {}):
         pygame.init()
-        dymond.create_variables(conf)
+        dymond.create_variables(player, conf)
 
         self.running = True  # Controla se el juego se sigue ejecutando
         self.display = pygame.display.set_mode(game_data.RES)  # Display donde se va a renderizar el frame
@@ -161,7 +163,11 @@ class Game:
 
     def exit_game(self):
         self.running = False
-
+        data = metodos.buscar_jugador_nombre(game_data.PLAYER_NAME)
+        if data:
+            if data["puntos"] < game_data.points:
+                metodos.modificar_jugador(game_data.PLAYER_NAME, game_data.points, self.level)
+        main.Main()
         pygame.quit()
         sys.exit()
 

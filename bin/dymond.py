@@ -9,17 +9,18 @@ from bin import game_data
 """
     @Santiago Barreiro Chapela
 
-    ES - Dymond es la clase hecha para facilitar la creacion de elementos del juego facilitar herramientas como el 
+    ES - Dymond es el modulo hecho para facilitar la creacion de elementos del juego facilitar herramientas como el 
     dibujado de texto, renderizado o carga de animaciones.
 """
 
 
-def create_variables(conf: {}):
+def create_variables(player: str, conf: {}):
     """
 
     :return:
 
     """
+    game_data.PLAYER_NAME = player
     game_data.FRAME_SIZE = (480, 270)
     game_data.RES = conf["resolucion"]
     game_data.SFX_VOLUME = conf["sfx_volume"]

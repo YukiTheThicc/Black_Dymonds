@@ -1,3 +1,4 @@
+global PLAYER_NAME
 global FRAME_SIZE
 global RES
 global CLK_TICKS
