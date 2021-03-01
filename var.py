@@ -1,4 +1,5 @@
 global ui
+global window
 global ventanaPrincipal
 global avisoSalir
 

@@ -1,7 +1,7 @@
 import metodos
 import sys
 import var
-from MainWindow import *
+from Ui_MainWindow import *
 from VentanaSalir import *
 from dymond_game import game
 
@@ -19,14 +19,6 @@ class DialogSalir(QtWidgets.QDialog):
         var.avisoSalir = Ui_DialogAvisoSalir()
         var.avisoSalir.setupUi(self)
         var.avisoSalir.buttonBoxSalir.button(QtWidgets.QDialogButtonBox.Yes).clicked.connect(metodos.salir)
-
-
-def cerrar_ventana():
-    window.hide()
-
-
-def abrir_ventana():
-    window.showNormal()
 
 
 class Main(QtWidgets.QMainWindow):
@@ -64,9 +56,17 @@ class Main(QtWidgets.QMainWindow):
         var.ui.tablaJugadores.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
 
 
+def cerrar_ventana():
+    var.window.hide()
+
+
+def abrir_ventana():
+    var.window.showNormal()
+
+
 if __name__ == '__main__':
     qapp = QtWidgets.QApplication([])
-    window = Main()
-    window.setWindowTitle("Black Dyamonds")
-    window.showNormal()
+    var.window = Main()
+    var.window.setWindowTitle("Black Dyamonds")
+    var.window.showNormal()
     sys.exit(qapp.exec())

@@ -111,8 +111,8 @@ class Game:
                 random.choice(game_data.audio["game"]["ready"]).play()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    timer = -1
+                    self.running = False
             pygame.display.update()
             self.clock.tick(game_data.CLK_TICKS)
             timer -= 1
@@ -169,7 +169,7 @@ class Game:
                 metodos.modificar_jugador(game_data.PLAYER_NAME, game_data.points, self.level)
         main.abrir_ventana()
         pygame.quit()
-        sys.exit()
+        pygame.display.quit()
 
     def run(self):
         while self.running:
@@ -187,6 +187,8 @@ class Game:
             if self.has_changed_level:
                 self.new_level_transition(300)
                 self.has_changed_level = False
+            if not self.running:
+                self.exit_game()
 
     def pause_menu(self):
         pygame.mixer.music.pause()
@@ -198,7 +200,8 @@ class Game:
         while paused:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.exit_game()
+                    paused = False
+                    self.running = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.unpause()
@@ -207,7 +210,7 @@ class Game:
     def event_handler(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.exit_game()
+                self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
                     self.player.states["RUNNING_RIGHT"] = True
