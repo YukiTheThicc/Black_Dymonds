@@ -2,7 +2,6 @@ import gc
 import random
 import time
 import pygame
-import sys
 
 import main
 import metodos
@@ -39,10 +38,10 @@ class Game:
         self.levels_per_scenario = 5
         self.level = 0
 
-        self.change_map()  # Se carga un mapa
+        self.change_map()  # Se selecciona un mapa
         game_data.drop_chances = dymond.load_drop_chances("dymond_game/info/drop_chances_info.json")
-        game_data.animations = dymond.load_animations("dymond_game/info/animation_loader_info.json")  # Cargamos base de animaciones
-        game_data.audio = dymond.load_audio("dymond_game/info/audio_loader_info.json")  # Se carga el audio
+        game_data.animations = dymond.load_animations("dymond_game/info/animation_loader_info.json")
+        game_data.audio = dymond.load_audio("dymond_game/info/audio_loader_info.json")
 
     def change_map(self):
         if self.level % self.levels_per_scenario == 0:
@@ -159,17 +158,18 @@ class Game:
 
     def check_player_death(self):
         if self.player.hp <= 0:
-            self.exit_game()
+            self.running = False
 
     def exit_game(self):
-        self.running = False
         data = metodos.buscar_jugador_nombre(game_data.PLAYER_NAME)
         if data:
             if data["puntos"] < game_data.points:
                 metodos.modificar_jugador(game_data.PLAYER_NAME, game_data.points, self.level)
+        game_data.FONTS = {}
         main.abrir_ventana()
         pygame.quit()
         pygame.display.quit()
+        gc.collect()
 
     def run(self):
         while self.running:
