@@ -2,8 +2,8 @@ import random
 
 import pygame
 
-from bin import game_data
-from bin.maps import parralax
+from dymond_game import game_data
+from dymond_game.maps import parralax
 
 
 class Scenario:

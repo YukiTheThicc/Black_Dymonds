@@ -1,7 +1,7 @@
 import random
 
-from bin import game_data
-from bin.entities.dynamic.dynamic import Dynamic
+from dymond_game import game_data
+from dymond_game.entities.dynamic.dynamic import Dynamic
 
 
 class Pickable(Dynamic):

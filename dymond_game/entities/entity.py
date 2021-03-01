@@ -1,7 +1,7 @@
 import random
 
 import pygame
-from bin import dymond, game_data
+from dymond_game import dymond, game_data
 
 
 class Entity:

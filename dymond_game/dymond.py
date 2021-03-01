@@ -1,10 +1,10 @@
 import json
 import pygame
 
-from bin.entities import projectile, entity, pickable
-from bin.entities.dynamic import dynamic, enemy_melee, player
-from bin.maps import scenario
-from bin import game_data
+from dymond_game.entities import projectile, entity, pickable
+from dymond_game.entities.dynamic import dynamic, enemy_melee, player
+from dymond_game.maps import scenario
+from dymond_game import game_data
 
 """
     @Santiago Barreiro Chapela
@@ -190,7 +190,7 @@ def load_drop_chances(json_path: str):
 
 def create_scenario(map_name: str):
     new_map = scenario.Scenario()
-    f = open("bin/info/scenarios/" + map_name + ".json", 'r')
+    f = open("dymond_game/info/scenarios/" + map_name + ".json", 'r')
     map_info = json.load(f)
     f.close()
     new_map.load(map_info)

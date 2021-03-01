@@ -3,6 +3,14 @@ import sys
 import var
 from MainWindow import *
 from VentanaSalir import *
+from dymond_game import game
+
+
+def lanzar_juego():
+    jugador = str(var.ui.lblJugador.text())
+    conf = metodos.recoger_configuracion()
+    juego = game.Game(jugador, conf)
+    juego.run()
 
 
 class DialogSalir(QtWidgets.QDialog):
@@ -11,6 +19,14 @@ class DialogSalir(QtWidgets.QDialog):
         var.avisoSalir = Ui_DialogAvisoSalir()
         var.avisoSalir.setupUi(self)
         var.avisoSalir.buttonBoxSalir.button(QtWidgets.QDialogButtonBox.Yes).clicked.connect(metodos.salir)
+
+
+def cerrar_ventana():
+    window.hide()
+
+
+def abrir_ventana():
+    window.showNormal()
 
 
 class Main(QtWidgets.QMainWindow):
@@ -27,7 +43,7 @@ class Main(QtWidgets.QMainWindow):
         ''' BOTONES '''
         var.ui.btnCargarJugador.clicked.connect(metodos.cargar_jugadores)
 
-        var.ui.btnEmpezar.clicked.connect(self.cerrar_ventana)
+        var.ui.btnEmpezar.clicked.connect(cerrar_ventana)
         var.ui.btnEmpezar.clicked.connect(metodos.lanzar_juego)
 
         var.ui.btnCargarJugador.clicked.connect(metodos.mostrar_nombre_jugadores)
@@ -46,9 +62,6 @@ class Main(QtWidgets.QMainWindow):
         metodos.mostrar_nombre_jugadores()
         var.ui.tablaJugadores.clicked.connect(metodos.seleccion_jugador)
         var.ui.tablaJugadores.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
-
-    def cerrar_ventana(self):
-        window.close()
 
 
 if __name__ == '__main__':

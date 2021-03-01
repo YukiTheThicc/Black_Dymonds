@@ -1,5 +1,5 @@
-from bin.entities.entity import *
-from bin.data_types import Vector2
+from dymond_game.entities.entity import *
+from dymond_game.data_types import Vector2
 
 
 class Projectile:

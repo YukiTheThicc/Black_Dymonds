@@ -1,6 +1,6 @@
 import pygame
 
-from bin import game_data
+from dymond_game import game_data
 
 
 class LayerObj(object):

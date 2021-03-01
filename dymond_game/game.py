@@ -6,7 +6,7 @@ import sys
 
 import main
 import metodos
-from bin import dymond, game_data
+from dymond_game import dymond, game_data
 
 
 class Game:
@@ -40,9 +40,9 @@ class Game:
         self.level = 0
 
         self.change_map()  # Se carga un mapa
-        game_data.drop_chances = dymond.load_drop_chances("bin/info/drop_chances_info.json")
-        game_data.animations = dymond.load_animations("bin/info/animation_loader_info.json")  # Cargamos base de animaciones
-        game_data.audio = dymond.load_audio("bin/info/audio_loader_info.json")  # Se carga el audio
+        game_data.drop_chances = dymond.load_drop_chances("dymond_game/info/drop_chances_info.json")
+        game_data.animations = dymond.load_animations("dymond_game/info/animation_loader_info.json")  # Cargamos base de animaciones
+        game_data.audio = dymond.load_audio("dymond_game/info/audio_loader_info.json")  # Se carga el audio
 
     def change_map(self):
         if self.level % self.levels_per_scenario == 0:
@@ -167,7 +167,7 @@ class Game:
         if data:
             if data["puntos"] < game_data.points:
                 metodos.modificar_jugador(game_data.PLAYER_NAME, game_data.points, self.level)
-        main.Main()
+        main.abrir_ventana()
         pygame.quit()
         sys.exit()
 

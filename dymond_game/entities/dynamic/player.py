@@ -2,8 +2,8 @@ import random
 
 import pygame
 
-from bin.entities.dynamic.dynamic import Dynamic
-from bin import dymond, game_data
+from dymond_game.entities.dynamic.dynamic import Dynamic
+from dymond_game import dymond, game_data
 
 
 class Player(Dynamic):

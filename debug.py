@@ -1,4 +1,4 @@
-from bin import game
+from dymond_game import game
 
 
 class Main:
@@ -7,7 +7,7 @@ class Main:
 
 
 if __name__ == '__main__':
-    game_test = game.Game({
+    game_test = game.Game("test", {
         "resolucion": [1600, 900],
         "sfx_volume": 0.5,
         "mus_volume": 0.5

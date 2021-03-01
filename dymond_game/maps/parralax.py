@@ -1,4 +1,4 @@
-from bin.maps.layer_obj import *
+from dymond_game.maps.layer_obj import *
 import pygame
 
 

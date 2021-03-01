@@ -1,8 +1,9 @@
+import json
+import time
+
 from PyQt5 import QtSql
 
-from bin.game import Game
 from main import *
-import time, json, sys
 
 
 def conexion_base_de_datos(name):
@@ -255,9 +256,3 @@ def cargar_cmb_res():
     except Exception as error:
         print('Error al cargar las resoluciones en el comboBox' + str(error))
 
-
-def lanzar_juego():
-    jugador = str(var.ui.lblJugador.text())
-    conf = recoger_configuracion()
-    juego = Game(jugador, conf)
-    juego.run()
