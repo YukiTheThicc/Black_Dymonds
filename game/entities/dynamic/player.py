@@ -3,7 +3,7 @@ import random
 import pygame
 
 import data
-from entities.dynamic.dynamic import Dynamic
+from game.entities.dynamic.dynamic import Dynamic
 import dymond
 
 

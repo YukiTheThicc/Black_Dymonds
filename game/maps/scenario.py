@@ -2,8 +2,8 @@ import random
 
 import pygame
 
-import var
-from maps import parralax
+import data
+from game.maps import parralax
 
 
 class Scenario:
@@ -71,12 +71,12 @@ class Scenario:
         tile_info = map_info["tile_paths"]
         for tile_id in tile_info:
             tile = pygame.image.load(tile_info[tile_id]).convert()
-            tile.set_colorkey(var.COLOR_KEY)
+            tile.set_colorkey(data.COLOR_KEY)
             self.tile_set[tile_id] = tile
         bkg_tile_info = map_info["bkg_tile_paths"]
         for tile_id in bkg_tile_info:
             tile = pygame.image.load(bkg_tile_info[tile_id]).convert()
-            tile.set_colorkey(var.COLOR_KEY)
+            tile.set_colorkey(data.COLOR_KEY)
             self.bkg_tile_set[tile_id] = tile
         bck_info = map_info["background"]
         self.non_collision_group = map_info["non_collision_group"]

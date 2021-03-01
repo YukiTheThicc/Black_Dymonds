@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="diamond">
+    <file>bfiamond.png</file>
+  </qresource>
+</RCC>

@@ -1,4 +1,4 @@
-from entities.entity import *
+from game.entities.entity import *
 from data_types import Vector2
 
 

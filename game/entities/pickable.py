@@ -1,7 +1,7 @@
 import random
 
 import data
-from entities.dynamic.dynamic import Dynamic
+from game.entities.dynamic.dynamic import Dynamic
 
 
 class Pickable(Dynamic):

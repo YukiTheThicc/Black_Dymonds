@@ -1,4 +1,4 @@
-from maps.layer_obj import *
+from game.maps.layer_obj import *
 import pygame
 
 

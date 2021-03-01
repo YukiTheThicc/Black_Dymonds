@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="recargar">
+    <file>recargar.png</file>
+  </qresource>
+</RCC>

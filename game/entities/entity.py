@@ -3,7 +3,6 @@ import random
 import pygame
 import data
 import dymond
-import var
 
 
 class Entity:
@@ -32,7 +31,7 @@ class Entity:
 
     def check_health(self, entity_list, pickable_list):
         if self.hp <= 0:
-            var.points += self.points
+            data.points += self.points
             entity_list.remove(self)
             random.choice(data.audio[self.type]["death"]).play()
             chance = random.randint(0, 100)
@@ -113,4 +112,3 @@ class Entity:
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         self.check_coll(tile_list)
         self.check_health(entity_list, pickable_list)
-

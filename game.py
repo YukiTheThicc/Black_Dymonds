@@ -5,7 +5,6 @@ import pygame
 import sys
 
 import dymond
-import var
 import data
 
 
@@ -21,8 +20,8 @@ class Game:
         dymond.create_variables()
 
         self.running = True  # Controla se el juego se sigue ejecutando
-        self.display = pygame.display.set_mode(var.RES)  # Display donde se va a renderizar el frame
-        self.frame = pygame.Surface(var.FRAME_SIZE)  # Frame donde se va a dibujar
+        self.display = pygame.display.set_mode(data.RES)  # Display donde se va a renderizar el frame
+        self.frame = pygame.Surface(data.FRAME_SIZE)  # Frame donde se va a dibujar
 
         self.previous_frame = None
         self.scenarios = ["andula_desert"]  # Lista de mapas
@@ -40,9 +39,9 @@ class Game:
         self.level = 0
 
         self.change_map()  # Se carga un mapa
-        data.drop_chances = dymond.load_drop_chances("info/drop_chances_info.json")
-        data.animations = dymond.load_animations("info/animation_loader_info.json")  # Cargamos base de animaciones
-        data.audio = dymond.load_audio("info/audio_loader_info.json")  # Se carga el audio
+        data.drop_chances = dymond.load_drop_chances("game/info/drop_chances_info.json")
+        data.animations = dymond.load_animations("game/info/animation_loader_info.json")  # Cargamos base de animaciones
+        data.audio = dymond.load_audio("game/info/audio_loader_info.json")  # Se carga el audio
 
     def change_map(self):
         if self.level % self.levels_per_scenario == 0:
@@ -84,7 +83,7 @@ class Game:
             while fade_in_timer > 0:
                 fade_in_timer -= 1
             pygame.display.update()
-            self.clock.tick(var.CLK_TICKS)
+            self.clock.tick(data.CLK_TICKS)
 
     def new_level_transition(self, frames):
         gc.collect()
@@ -98,7 +97,7 @@ class Game:
         while timer > 0:
             self.frame.blit(self.previous_frame, (0, 0))
             back.fill((0, 0, 0))
-            back.set_colorkey(var.COLOR_KEY)
+            back.set_colorkey(data.COLOR_KEY)
             self.frame.blit(pygame.transform.rotate(back, 75), (offset-460, -91))
             if timer > (frames-percent) or timer < percent:
                 offset += 10
@@ -106,7 +105,7 @@ class Game:
                 self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
                 self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)) + "s",
                                                  "BIG", "white"), (120, 160))
-            self.display.blit(pygame.transform.scale(self.frame, var.RES), (0, 0))
+            self.display.blit(pygame.transform.scale(self.frame, data.RES), (0, 0))
             if timer == 100:
                 random.choice(data.audio["game"]["ready"]).play()
             for event in pygame.event.get():
@@ -114,7 +113,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
             pygame.display.update()
-            self.clock.tick(var.CLK_TICKS)
+            self.clock.tick(data.CLK_TICKS)
             timer -= 1
 
     def scenario_transition(self):
@@ -122,8 +121,8 @@ class Game:
 
     def scroll(self, player):
         player_pos = player.get_position()
-        self.true_scroll[0] += (player_pos[0] - self.true_scroll[0] - var.CAMERA_OFFSET[0]) / 6
-        self.true_scroll[1] += (player_pos[1] - self.true_scroll[1] - var.CAMERA_OFFSET[1]) / 6
+        self.true_scroll[0] += (player_pos[0] - self.true_scroll[0] - data.CAMERA_OFFSET[0]) / 6
+        self.true_scroll[1] += (player_pos[1] - self.true_scroll[1] - data.CAMERA_OFFSET[1]) / 6
         scroll = self.true_scroll.copy()
         scroll[0] = int(scroll[0])
         scroll[1] = int(scroll[1])
@@ -140,7 +139,7 @@ class Game:
             pickable.draw(self.frame, scroll)
         self.player.draw(self.frame, scroll)
         self.previous_frame = dymond.render_frame(self.display, self.frame, scroll, self.clock, self.time_left,
-                                                  var.points, self.player.hp, True, True)
+                                                  data.points, self.player.hp, True, True)
 
     def update(self):
         self.player.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list,
@@ -170,7 +169,7 @@ class Game:
             not_paused = self.event_handler(self.player)
             self.update()
             self.draw()
-            self.clock.tick(var.CLK_TICKS)
+            self.clock.tick(data.CLK_TICKS)
             end = time.time()
             self.check_end_level()
             if not_paused:

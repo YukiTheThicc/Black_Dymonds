@@ -1,10 +1,10 @@
 import json
 import pygame
 
-from entities import entity, projectile, pickable
-from entities.dynamic import player, dynamic, enemy_melee
-from maps import scenario
-import var
+from game.entities import projectile, entity, pickable
+from game.entities.dynamic import dynamic, enemy_melee, player
+from game.maps import scenario
+import data
 
 """
     @Santiago Barreiro Chapela
@@ -20,13 +20,13 @@ def create_variables():
     :return:
 
     """
-    var.FRAME_SIZE = (480, 270)
-    var.RES = (1600, 900)
-    var.CAMERA_OFFSET = (224, 182)
-    var.COLOR_KEY = (0, 255, 0)
-    var.TIMER = 0
-    var.CLK_TICKS = 60
-    var.FONTS = {
+    data.FRAME_SIZE = (480, 270)
+    data.RES = (1600, 900)
+    data.CAMERA_OFFSET = (224, 182)
+    data.COLOR_KEY = (0, 255, 0)
+    data.TIMER = 0
+    data.CLK_TICKS = 60
+    data.FONTS = {
         "SMALL": pygame.font.SysFont("impact", 12),
         "BIG": pygame.font.SysFont("impact", 16),
         "HUGE": pygame.font.SysFont("impact", 20),
@@ -151,7 +151,7 @@ def load_animations(json_path: str):
             loaded_frames = []
             for frame in frames:
                 image = pygame.image.load(frame[1]).convert()
-                image.set_colorkey(var.COLOR_KEY)
+                image.set_colorkey(data.COLOR_KEY)
                 loaded_frames.append((frame[0], image))
             loaded_animations[animation] = loaded_frames
         animation_data[entity_type] = loaded_animations
@@ -180,9 +180,9 @@ def load_audio(json_path: str):
 
 def load_drop_chances(json_path: str):
     f = open(json_path, 'r')
-    data = json.load(f)
+    drop_data = json.load(f)
     f.close()
-    return data
+    return drop_data
 
 
 def create_scenario(map_name: str):
@@ -196,7 +196,7 @@ def create_scenario(map_name: str):
 
 def text_data(to_text, font: str, color: str):
     scr = str(to_text)
-    data_text = var.FONTS[font].render(scr, 1, pygame.Color(color))
+    data_text = data.FONTS[font].render(scr, 1, pygame.Color(color))
     return data_text
 
 
@@ -224,6 +224,6 @@ def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: fl
 def render_frame(display: pygame.display, frame: pygame.Surface, scroll, clock: pygame.time.Clock, time, points: int,
                  player_health: int, show_fps: False, show_scroll: False):
     render_hud(frame, scroll, clock, time, points, player_health, show_fps, show_scroll)
-    display.blit(pygame.transform.scale(frame, var.RES), (0, 0))
+    display.blit(pygame.transform.scale(frame, data.RES), (0, 0))
     pygame.display.update()
     return frame.copy()

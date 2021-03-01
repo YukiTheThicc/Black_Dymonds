@@ -1,5 +1,6 @@
 import pygame
-import var
+
+import data
 
 
 class LayerObj(object):
@@ -30,7 +31,7 @@ class LayerObj(object):
         self.stage_x = 0  # Stage (chunk) of the background on the x axis
         self.image = pygame.image.load(path).convert()  # Loads the image from the path and converts it to improve
         # performance
-        self.image.set_colorkey(var.COLOR_KEY)  # Color key for alpha transformation, set to pure green
+        self.image.set_colorkey(data.COLOR_KEY)  # Color key for alpha transformation, set to pure green
 
     def draw(self, frame: pygame.Surface, scroll):
         """
@@ -43,13 +44,13 @@ class LayerObj(object):
         :return None:
         """
         self.moved_offset += self.movement
-        self.stage_x = round(((scroll[0] + self.moved_offset) * self.ratio) / var.FRAME_SIZE[0])
-        self.x = self.stage_x * var.FRAME_SIZE[0]
+        self.stage_x = round(((scroll[0] + self.moved_offset) * self.ratio) / data.FRAME_SIZE[0])
+        self.x = self.stage_x * data.FRAME_SIZE[0]
         to_scroll = [(self.x - (scroll[0] + self.moved_offset) * self.ratio + self.offset[0]),
                      ((scroll[1] * self.ratio)*self.vertical + self.offset[1])]
         # Draws the main image, plus one to the left and another one to the right
         frame.blit(self.image, to_scroll)
         frame.blit(self.image,
-                   (to_scroll[0] + var.FRAME_SIZE[0], to_scroll[1]))
+                   (to_scroll[0] + data.FRAME_SIZE[0], to_scroll[1]))
         frame.blit(self.image,
-                   (to_scroll[0] - var.FRAME_SIZE[0], to_scroll[1]))
+                   (to_scroll[0] - data.FRAME_SIZE[0], to_scroll[1]))
