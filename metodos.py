@@ -1,5 +1,8 @@
-from PyQt5 import QtSql, QtWidgets, QtCore
-from main_Menu import *
+from PyQt5 import QtSql
+
+import main
+from bin.game import Game
+from main import *
 import time, json, sys
 
 
@@ -216,17 +219,17 @@ class Metodos():
         :rtype: diccionario
         """
         try:
-            mus_volume = round(var.ui.SliderMusica.value()*0.01, 2)
-            sfx_volume = round(var.ui.SliderEfectos.value()*0.01, 2)
+            mus_volume = round(var.ui.SliderMusica.value() * 0.01, 2)
+            sfx_volume = round(var.ui.SliderEfectos.value() * 0.01, 2)
 
             texto_resolucion = str(var.ui.cmbResolucion.currentText()).split(' x ')
-            valor_resolucion = [int(texto_resolucion[0]),int(texto_resolucion[1])]
+            valor_resolucion = [int(texto_resolucion[0]), int(texto_resolucion[1])]
 
-            configuracion = {"resolucion": valor_resolucion, 'mus_volume': mus_volume, 'sfx_volume': sfx_volume}
+            configuracion = {"resolucion": valor_resolucion, "mus_volume": mus_volume, "sfx_volume": sfx_volume}
 
             return configuracion
         except Exception as error:
-            print('Error cambioValor : '+str(error))
+            print('Error cambioValor : ' + str(error))
 
     @staticmethod
     def guardar_config():
@@ -248,14 +251,13 @@ class Metodos():
         config = json.load(f)
         f.close()
 
-        music_vol = config.get('mus_volume')*100
-        sfx_vol = config.get('sfx_volume')*100
-        resolucion = str(config.get('resolucion')[0]) + " x " + str(config.get('resolucion')[1])
+        music_vol = config.get("mus_volume") * 100
+        sfx_vol = config.get("sfx_volume") * 100
+        resolucion = str(config.get("resolucion")[0]) + " x " + str(config.get("resolucion")[1])
 
         var.ui.SliderMusica.setValue(music_vol)
         var.ui.SliderEfectos.setValue(sfx_vol)
         var.ui.cmbResolucion.setCurrentText(resolucion)
-
 
     @staticmethod
     def cargar_cmb_res():
@@ -264,14 +266,15 @@ class Metodos():
 
         """
         try:
-            diccioRes = ['1920 x 1080', '1280 x 720', '854 x 480', '640 x 360', '426 x 240']
+            diccioRes = ['1920 x 1080', '1600 x 900', '1280 x 720', '854 x 480', '640 x 360', '426 x 240']
             for i in diccioRes:
                 var.ui.cmbResolucion.addItem(i)
 
         except Exception as error:
             print('Error al cargar las resoluciones en el comboBox' + error)
 
-
     @staticmethod
     def lanzar_juego():
-        pass
+        conf = Metodos.recoger_configuracion()
+        juego = Game(conf)
+        juego.run()

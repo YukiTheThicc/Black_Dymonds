@@ -1,4 +1,4 @@
-from game.entities.entity import Entity
+from bin.entities.entity import Entity
 
 
 class Dynamic(Entity):

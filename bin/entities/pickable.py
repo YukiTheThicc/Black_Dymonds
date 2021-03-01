@@ -1,7 +1,7 @@
 import random
 
-import data
-from game.entities.dynamic.dynamic import Dynamic
+from bin import game_data
+from bin.entities.dynamic.dynamic import Dynamic
 
 
 class Pickable(Dynamic):
@@ -20,7 +20,7 @@ class HP_boost(Pickable):
             player.hp += self.hp
             if player.hp > player.max_hp:
                 player.hp = player.max_hp
-            random.choice(data.audio["game"]["hp_up"]).play()
+            random.choice(game_data.audio["game"]["hp_up"]).play()
             pickable_list.remove(self)
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):

@@ -1,8 +1,7 @@
 import random
 
 import pygame
-import data
-import dymond
+from bin import dymond, game_data
 
 
 class Entity:
@@ -31,13 +30,13 @@ class Entity:
 
     def check_health(self, entity_list, pickable_list):
         if self.hp <= 0:
-            data.points += self.points
+            game_data.points += self.points
             entity_list.remove(self)
-            random.choice(data.audio[self.type]["death"]).play()
+            random.choice(game_data.audio[self.type]["death"]).play()
             chance = random.randint(0, 100)
             pickable = ""
-            for drop_item in data.drop_chances[self.type]:
-                if chance <= data.drop_chances[self.type][drop_item]:
+            for drop_item in game_data.drop_chances[self.type]:
+                if chance <= game_data.drop_chances[self.type][drop_item]:
                     pickable = drop_item
             new_pickable = dymond.create_pickable(pickable, self.get_position())
             if new_pickable:
@@ -86,7 +85,7 @@ class Entity:
         :param loop:
         :return:
         """
-        frame_data = data.animations[self.type][self.action]
+        frame_data = game_data.animations[self.type][self.action]
         self.current_frame = frame_data[self.this_frame_index][1]
         self.frame_timer += 1
         if self.frame_timer == frame_data[self.this_frame_index][0]:

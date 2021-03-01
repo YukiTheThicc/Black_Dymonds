@@ -2,9 +2,8 @@ import random
 
 import pygame
 
-import data
-from game.entities.dynamic.dynamic import Dynamic
-import dymond
+from bin.entities.dynamic.dynamic import Dynamic
+from bin import dymond, game_data
 
 
 class Player(Dynamic):
@@ -152,12 +151,12 @@ class Player(Dynamic):
                 self.flash.set_position(off_pos)
                 self.flash.is_facing_left = False
                 proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 10, 4, 4, 10, 20, 0))
-            random.choice(data.audio[self.type]["shot"]).play()
+            random.choice(game_data.audio[self.type]["shot"]).play()
 
     def take_damage(self, damage: int):
         if not self.god_mode and self.immunity_frames == 0:
             self.hp -= damage
-            random.choice(data.audio[self.type]["hurt"]).play()
+            random.choice(game_data.audio[self.type]["hurt"]).play()
             self.immunity_frames = self.IMMUNITY_FRAMES
 
     def collision_handler(self, coll):

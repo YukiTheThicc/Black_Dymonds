@@ -1,7 +1,7 @@
 import random
 
-import data
-from game.entities.dynamic.dynamic import Dynamic
+from bin import game_data
+from bin.entities.dynamic.dynamic import Dynamic
 
 
 class Enemy_Melee(Dynamic):
@@ -95,7 +95,7 @@ class Enemy_Melee(Dynamic):
     def start_attack(self, player):
         frames_halt = 60 / self.rof
         if self.rof_timer % frames_halt == 0:
-            random.choice(data.audio[self.type]["slash"]).play()
+            random.choice(game_data.audio[self.type]["slash"]).play()
             self.set_action("ATTACKING")
             self.action_timer = 60/self.rof
             player.take_damage(self.damage)

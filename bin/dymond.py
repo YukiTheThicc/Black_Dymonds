@@ -1,10 +1,10 @@
 import json
 import pygame
 
-from game.entities import projectile, entity, pickable
-from game.entities.dynamic import dynamic, enemy_melee, player
-from game.maps import scenario
-import data
+from bin.entities import projectile, entity, pickable
+from bin.entities.dynamic import dynamic, enemy_melee, player
+from bin.maps import scenario
+from bin import game_data
 
 """
     @Santiago Barreiro Chapela
@@ -14,19 +14,21 @@ import data
 """
 
 
-def create_variables():
+def create_variables(conf: {}):
     """
 
     :return:
 
     """
-    data.FRAME_SIZE = (480, 270)
-    data.RES = (1600, 900)
-    data.CAMERA_OFFSET = (224, 182)
-    data.COLOR_KEY = (0, 255, 0)
-    data.TIMER = 0
-    data.CLK_TICKS = 60
-    data.FONTS = {
+    game_data.FRAME_SIZE = (480, 270)
+    game_data.RES = conf["resolucion"]
+    game_data.SFX_VOLUME = conf["sfx_volume"]
+    game_data.MUSIC_VOLUME = conf["mus_volume"]
+    game_data.CAMERA_OFFSET = (224, 182)
+    game_data.COLOR_KEY = (0, 255, 0)
+    game_data.TIMER = 0
+    game_data.CLK_TICKS = 60
+    game_data.FONTS = {
         "SMALL": pygame.font.SysFont("impact", 12),
         "BIG": pygame.font.SysFont("impact", 16),
         "HUGE": pygame.font.SysFont("impact", 20),
@@ -151,7 +153,7 @@ def load_animations(json_path: str):
             loaded_frames = []
             for frame in frames:
                 image = pygame.image.load(frame[1]).convert()
-                image.set_colorkey(data.COLOR_KEY)
+                image.set_colorkey(game_data.COLOR_KEY)
                 loaded_frames.append((frame[0], image))
             loaded_animations[animation] = loaded_frames
         animation_data[entity_type] = loaded_animations
@@ -171,7 +173,7 @@ def load_audio(json_path: str):
             loaded_sounds = []
             for sound in sound_info:
                 sfx = pygame.mixer.Sound(sound[1])
-                sfx.set_volume(sound[0])
+                sfx.set_volume(sound[0] * game_data.SFX_VOLUME)
                 loaded_sounds.append(sfx)
             loaded_audio[audio] = loaded_sounds
         audio_data[entity_type] = loaded_audio
@@ -187,7 +189,7 @@ def load_drop_chances(json_path: str):
 
 def create_scenario(map_name: str):
     new_map = scenario.Scenario()
-    f = open("info/scenarios/" + map_name + ".json", 'r')
+    f = open("bin/info/scenarios/" + map_name + ".json", 'r')
     map_info = json.load(f)
     f.close()
     new_map.load(map_info)
@@ -196,7 +198,7 @@ def create_scenario(map_name: str):
 
 def text_data(to_text, font: str, color: str):
     scr = str(to_text)
-    data_text = data.FONTS[font].render(scr, 1, pygame.Color(color))
+    data_text = game_data.FONTS[font].render(scr, 1, pygame.Color(color))
     return data_text
 
 
@@ -224,6 +226,6 @@ def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: fl
 def render_frame(display: pygame.display, frame: pygame.Surface, scroll, clock: pygame.time.Clock, time, points: int,
                  player_health: int, show_fps: False, show_scroll: False):
     render_hud(frame, scroll, clock, time, points, player_health, show_fps, show_scroll)
-    display.blit(pygame.transform.scale(frame, data.RES), (0, 0))
+    display.blit(pygame.transform.scale(frame, game_data.RES), (0, 0))
     pygame.display.update()
     return frame.copy()

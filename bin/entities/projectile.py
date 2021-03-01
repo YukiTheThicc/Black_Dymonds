@@ -1,5 +1,5 @@
-from game.entities.entity import *
-from data_types import Vector2
+from bin.entities.entity import *
+from bin.data_types import Vector2
 
 
 class Projectile:
