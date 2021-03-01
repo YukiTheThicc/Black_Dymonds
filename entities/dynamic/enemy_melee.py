@@ -87,7 +87,7 @@ class Enemy_Melee(Dynamic):
                     self.accelerate([2, 0])
                 elif player_pos[0] < my_pos[0]:
                     self.accelerate([-2, 0])
-            if self.distance_to_player < 64 and player_pos[1] < my_pos[1] - 64:
+            if self.distance_to_player < 128 and player_pos[1] < my_pos[1] - 64:
                 self.start_jump()
             if self.distance_to_player <= self.range:
                 self.start_attack(player)
@@ -106,21 +106,23 @@ class Enemy_Melee(Dynamic):
         self.action_timer -= 1
         self.rof_timer += 1
 
-    def draw(self, frame, scroll):
+    def draw(self, frame, scroll, player):
         """
 
+        :param player:
         :param frame:
         :param scroll:
         :return:
         """
-        if self.action == "ATTACKING":
-            self.animate(False)
-        else:
-            self.animate(True)
-        frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
+        if player.distance_to_point(self.box.center) < 320:
+            if self.action == "ATTACKING":
+                self.animate(False)
+            else:
+                self.animate(True)
+            frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
-        self.distance_to_player = self.distance_to_point(player.box.center)
+        self.distance_to_player = self.distance_to_point(player.position_center)
         if self.distance_to_player <= 320:
             self.check_health(entity_list, pickable_list)
             coll = self.move(tile_list)

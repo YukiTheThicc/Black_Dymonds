@@ -9,6 +9,24 @@ import var
 import data
 
 
+def pause_menu(player):
+    pygame.mixer.music.pause()
+    player.states["RUNNING_RIGHT"] = False
+    player.states["RUNNING_LEFT"] = False
+    player.is_shooting = False
+    player.is_aiming_up = False
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.music.unpause()
+                    paused = False
+
+
 class Game:
     """
     Clase principal del juego. Cuando se crea una instancia de la clase se crea un display de pygame. Contendra un 
@@ -69,9 +87,9 @@ class Game:
             to_x = self.scenario.get_tile_size()[0] * random.randint(8 + 8, self.scenario.length)
             to_y = 0
             while not self.scenario.check_collision((to_x, to_y), (32, 32)):
-                to_y += 32
+                to_y += self.scenario.TILE_SIZE[1]
             print(str(to_x) + " " + str(to_y))
-            self.entity_list.append(dymond.create_knifer((to_x-32, to_y-32), self.difficulty_multi))
+            self.entity_list.append(dymond.create_knifer((to_x, to_y - 32), self.difficulty_multi))
 
     def end_level_transition(self):
         fade_in_timer = 120
@@ -133,12 +151,12 @@ class Game:
         scroll = self.scroll(self.player)
         self.scenario.render(self.frame, scroll, self.player)
         for obj in self.entity_list:
-            obj.draw(self.frame, scroll)
+            obj.draw(self.frame, scroll, self.player)
         for proj in self.proj_list:
             proj.draw(self.frame, scroll)
         for pickable in self.pickable_list:
-            pickable.draw(self.frame, scroll)
-        self.player.draw(self.frame, scroll)
+            pickable.draw(self.frame, scroll, self.player)
+        self.player.draw(self.frame, scroll, self.player)
         self.previous_frame = dymond.render_frame(self.display, self.frame, scroll, self.clock, self.time_left,
                                                   var.points, self.player.hp, True, True)
 
@@ -181,26 +199,7 @@ class Game:
                 self.new_level_transition(300)
                 self.has_changed_level = False
 
-    @staticmethod
-    def pause_menu(player):
-        pygame.mixer.music.pause()
-        player.states["RUNNING_RIGHT"] = False
-        player.states["RUNNING_LEFT"] = False
-        player.is_shooting = False
-        player.is_aiming_up = False
-        paused = True
-        while paused:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        pygame.mixer.music.unpause()
-                        paused = False
-
-    @staticmethod
-    def event_handler(player):
+    def event_handler(self, player):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -216,8 +215,13 @@ class Game:
                     player.states["AIMING_UP"] = True
                 if event.key == pygame.K_LSHIFT:
                     player.states["SHOOTING"] = True
+                if event.key == pygame.K_p:
+                    print("player: " + str(player.get_position()))
+                if event.key == pygame.K_e:
+                    for entiry in self.entity_list:
+                        print(entiry.get_position())
                 if event.key == pygame.K_ESCAPE:
-                    Game.pause_menu(player)
+                    pause_menu(player)
                     return False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_d:

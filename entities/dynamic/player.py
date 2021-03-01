@@ -23,6 +23,7 @@ class Player(Dynamic):
     def __init__(self, e_type: str, pos: [int, int], hp: int, max_speed: [int, int],
                  acc: float, friction: [float, float], j_strength: int, rof: int, has_mass=True, god_mode=False):
         super().__init__(e_type, pos, self.HITBOX_SIZE, hp, max_speed, friction, True, has_mass, god_mode)
+        self.position_center = 0
         self.acc = acc
         self.j_spd = j_strength
         self.rof = rof
@@ -176,7 +177,7 @@ class Player(Dynamic):
         if coll[3]:
             self.vel[1] = 0
 
-    def draw(self, frame, scroll):
+    def draw(self, frame, scroll, player):
         self.animate(True)
         if self.states["IS_SHOOTING"]:
             self.flash.animate(True)
@@ -209,3 +210,4 @@ class Player(Dynamic):
             self.rof_timer = 0
         if self.immunity_frames > 0:
             self.immunity_frames -= 1
+        self.position_center = self.box.center

@@ -100,15 +100,17 @@ class Entity:
                 self.this_frame_index = len(frame_data) - 1
         self.current_frame = pygame.transform.flip(self.current_frame, self.is_facing_left, self.is_facing_up)
 
-    def draw(self, frame, scroll):
+    def draw(self, frame, scroll, player):
         """
 
+        :param player:
         :param frame:
         :param scroll:
         :return:
         """
-        self.animate(True)
-        frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
+        if player.distance_to_point(self.box.center) < 320:
+            self.animate(True)
+            frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
         self.check_coll(tile_list)
