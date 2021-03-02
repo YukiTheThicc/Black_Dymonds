@@ -25,11 +25,12 @@ class Entity:
         self.is_facing_up = False
 
     def take_damage(self, damage: int):
+        random.choice(game_data.audio["hit"][self.type]).play()
         if not self.god_mode:
             self.hp -= damage
 
     def check_health(self, entity_list, pickable_list):
-        if self.hp <= 0:
+        if self.hp <= 0 and not self.god_mode:
             game_data.points += self.points
             entity_list.remove(self)
             random.choice(game_data.audio[self.type]["death"]).play()

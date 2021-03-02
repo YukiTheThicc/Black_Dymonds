@@ -40,9 +40,10 @@ def create_variables(player: str, conf: {}):
 # ENTITY CREATORS BEGIN-------------------------------------------------------------------------------------------------
 
 
-def create_entity(e_type: str, pos_x: int, pos_y: int, x: int, y: int, hp: int, god_mode=False):
+def create_entity(e_type: str, pos_x: int, pos_y: int, x: int, y: int, hp: int, collides=True, god_mode=False):
     """
 
+    :param collides:
     :param god_mode:
     :param hp:
     :param e_type:
@@ -53,7 +54,7 @@ def create_entity(e_type: str, pos_x: int, pos_y: int, x: int, y: int, hp: int, 
     :return:
 
     """
-    return entity.Entity(e_type, pos_x, pos_y, x, y, hp, god_mode)
+    return entity.Entity(e_type, pos_x, pos_y, x, y, hp, collides, god_mode)
 
 
 def create_dynamic_entity(e_type: str, pos: (int, int), size: (int, int), hp: int, max_speed: [int, int],

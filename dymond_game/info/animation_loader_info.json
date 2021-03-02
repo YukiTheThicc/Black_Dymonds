@@ -1,4 +1,11 @@
 {
+  "test_box":
+  {
+    "IDLE":
+    [
+      [5, "res/spr/test_box/idle_0.png"]
+    ]
+  },
   "sh_boost":
   {
     "IDLE":

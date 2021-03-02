@@ -16,6 +16,9 @@ class Game:
 
     # Constructor
     def __init__(self, player: str, conf: {}):
+        pygame.mixer.pre_init(44100, -16, 2, 512)
+        pygame.mixer.init()
+        pygame.mixer.set_num_channels(64)
         pygame.init()
         dymond.create_variables(player, conf)
 
@@ -60,17 +63,34 @@ class Game:
         self.entity_list = []
         self.proj_list = []
         self.player.set_position(self.scenario.player_spawn)
-        self.spawn_entities()
+        self.entity_injector()
 
-    def spawn_entities(self):
+    def create_enemy(self, pos: [int, int], e_type):
+        if e_type == "knifer":
+            return dymond.create_knifer((pos[0], pos[1]), self.difficulty_multi)
+        else:
+            return None
+
+    def entity_injector(self):
         enemies_to_spawn = round(10 * self.difficulty_multi)
-        for i in range(enemies_to_spawn):
-            to_x = self.scenario.get_tile_size()[0] * random.randint(8 + 8, self.scenario.length)
-            to_y = 0
-            while not self.scenario.check_collision((to_x, to_y), (32, 32)):
-                to_y += 32
-            print(str(to_x) + " " + str(to_y))
-            self.entity_list.append(dymond.create_knifer((to_x - 32, to_y - 32), self.difficulty_multi))
+        while enemies_to_spawn > 0:
+            injected = False
+            while not injected:
+                chance = random.randint(0, 100)
+                new_entity = None
+                for entity in self.scenario.enemies:
+                    if chance <= self.scenario.enemies[entity]:
+                        new_entity = entity
+                if new_entity is not None:
+                    to_x = self.scenario.get_tile_size()[0] * random.randint(8 + 8, self.scenario.length)
+                    to_y = self.scenario.get_tile_size()[1] * random.randint(0, self.scenario.height)
+                    has_box_below = self.scenario.check_collision([to_x, to_y], [32, 32])
+                    is_blocked = self.scenario.check_collision([to_x - 16, to_y - 32], [64, 32])
+                    # self.entity_list.append(dymond.create_entity("test_box", to_x, to_y, 32, 32, 0, True, True))
+                    if not is_blocked and has_box_below:
+                        self.entity_list.append(self.create_enemy((to_x, to_y - 32), new_entity))
+                        enemies_to_spawn -= 1
+                        injected = True
 
     def end_level_transition(self):
         fade_in_timer = 120
@@ -90,7 +110,7 @@ class Game:
         timer = frames
         back = pygame.Surface((500, 350))
         offset = 0
-        percent = int(frames*0.15)
+        percent = int(frames * 0.15)
         pygame.mixer.music.load(random.choice(self.scenario.music_tracks))
         pygame.mixer.music.set_volume(0.2 * game_data.MUSIC_VOLUME)
         pygame.mixer.music.play()
@@ -98,8 +118,8 @@ class Game:
             self.frame.blit(self.previous_frame, (0, 0))
             back.fill((0, 0, 0))
             back.set_colorkey(game_data.COLOR_KEY)
-            self.frame.blit(pygame.transform.rotate(back, 75), (offset-460, -91))
-            if timer > (frames-percent) or timer < percent:
+            self.frame.blit(pygame.transform.rotate(back, 75), (offset - 460, -91))
+            if timer > (frames - percent) or timer < percent:
                 offset += 10
             else:
                 self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
@@ -142,14 +162,15 @@ class Game:
                                                   game_data.points, self.player.hp, True, True)
 
     def update(self):
-        self.player.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list,
+        self.player.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
                            self.pickable_list)
         for proj in self.proj_list:
-            proj.update(self.scenario.collision_boxes, self.entity_list, self.proj_list)
+            proj.update(self.scenario.active_collision_boxes, self.entity_list, self.proj_list)
         for obj in self.entity_list:
-            obj.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list, self.pickable_list)
+            obj.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
+                       self.pickable_list)
         for pickable in self.pickable_list:
-            pickable.update(self.player, self.scenario.collision_boxes, self.entity_list, self.proj_list,
+            pickable.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
                             self.pickable_list)
 
     def check_end_level(self):

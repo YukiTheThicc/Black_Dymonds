@@ -44,7 +44,7 @@ def cargar_jugadores():
         query.bindValue(':nombre', str(nombre_jugador))
         query.bindValue(':puntos', 0)
         query.bindValue(':nivel', 0)
-        query.bindValue(':fecha', str(time.strftime("%d/%m/%y")))
+        query.bindValue(':fecha', str(time.strftime("%d/%m/%y"+" - "+"%H:%M")))
 
         if query.exec_():
             print('Insercción Correcta')
@@ -69,7 +69,7 @@ def modificar_jugador(nombre, puntos, nivel):
         query.bindValue(':nombre', str(nombre))
         query.bindValue(':puntos', int(puntos))
         query.bindValue(':nivel', int(nivel))
-        query.bindValue(':fecha', str(time.strftime("%d/%m/%y")))
+        query.bindValue(':fecha', str(time.strftime("%d/%m/%y"+" - "+"%H:%M")))
 
         if query.exec_():
             mostrar_nombre_jugadores()
