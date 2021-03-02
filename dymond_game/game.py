@@ -31,7 +31,7 @@ class Game:
         self.pickable_list = []  # Lista de elementos que se pueden recoger
         self.entity_list = []  # Lista de entidades
         self.proj_list = []  # Lista de proyectiles
-        self.player = dymond.create_player('player_soldier', (0, 0), 10, (5, 12), 2, (0.12, 0), 10, 10, True, False)
+        self.player = dymond.create_player('player_soldier', (0, 0), 100, (5, 12), 2, (0.12, 0), 10, 10, True, False)
         self.scenario = None  # Escenario actual
         self.true_scroll = [0, 0]  # Scroll (con valores decimales)
         self.clock = pygame.time.Clock()  # Reloj
