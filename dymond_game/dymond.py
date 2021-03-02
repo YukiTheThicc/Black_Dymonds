@@ -25,6 +25,7 @@ def create_variables(player: str, conf: {}):
     game_data.RES = conf["resolucion"]
     game_data.SFX_VOLUME = conf["sfx_volume"]
     game_data.MUSIC_VOLUME = conf["mus_volume"]
+    game_data.DEBUG_MODE = conf["debug_mode"]
     game_data.CAMERA_OFFSET = (224, 182)
     game_data.COLOR_KEY = (0, 255, 0)
     game_data.TIMER = 0
@@ -206,18 +207,15 @@ def text_data(to_text, font: str, color: str):
 
 
 def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: float, points: int, player_health: int,
-               player_max_hp: int, show_fps: False, show_scroll: False):
+               player_max_hp: int):
     fps = str(int(clock.get_fps())) + " FPS"
-    if show_fps:
+    if game_data.DEBUG_MODE:
         frame.blit(text_data(fps, "SMALL", "black"), (380, 250))
-    if show_scroll:
         frame.blit(text_data(scroll, "SMALL", "black"), (420, 250))
-
     if time <= 0:
         time = 0
     frame.blit(text_data(str(round(time, 3)) + "s", "BIG", "black"), (420, 4))
     frame.blit(text_data(str(points) + "p", "BIG", "black"), (420, 20))
-
     if player_health <= 0:
         player_health = 0
     pygame.draw.rect(frame, (10, 10, 10), pygame.Rect(6, 6, 2 * player_max_hp + 4, 20))
@@ -227,8 +225,8 @@ def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: fl
 
 
 def render_frame(display: pygame.display, frame: pygame.Surface, scroll, clock: pygame.time.Clock, time, points: int,
-                 player_health: int, player_max_hp, show_fps: False, show_scroll: False):
-    render_hud(frame, scroll, clock, time, points, player_health, player_max_hp, show_fps, show_scroll)
+                 player_health: int, player_max_hp):
+    render_hud(frame, scroll, clock, time, points, player_health, player_max_hp)
     display.blit(pygame.transform.scale(frame, game_data.RES), (0, 0))
     pygame.display.update()
     return frame.copy()

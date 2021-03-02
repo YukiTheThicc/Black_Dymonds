@@ -8,6 +8,7 @@ global COLOR_KEY
 global FONTS
 global SFX_VOLUME
 global MUSIC_VOLUME
+global DEBUG_MODE
 points = 0
 
 global animations

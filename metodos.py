@@ -46,6 +46,7 @@ def cargar_jugadores():
         query.bindValue(':nivel', 0)
         query.bindValue(':fecha', str(time.strftime("%d/%m/%y"+" - "+"%H:%M")))
 
+
         if query.exec_():
             print('Insercción Correcta')
         else:
@@ -170,7 +171,6 @@ def seleccion_jugador():
         fila = var.ui.tablaJugadores.selectedItems()
         if fila:
             fila = [dato.text() for dato in fila]
-        var.ui.lblJugador.setStyleSheet('QLabel {color: black;font-family: Impact; font-size: 20px;}')
         var.ui.lblJugador.setText(str(fila[0]))
 
         if var.ui.lblJugador.text() != '':
@@ -202,13 +202,15 @@ def recoger_configuracion():
     :rtype: diccionario
     """
     try:
+
+        opc_developer = var.ui.chkDeveloper.isChecked()
         mus_volume = round(var.ui.SliderMusica.value() * 0.01, 2)
         sfx_volume = round(var.ui.SliderEfectos.value() * 0.01, 2)
 
         texto_resolucion = str(var.ui.cmbResolucion.currentText()).split(' x ')
         valor_resolucion = [int(texto_resolucion[0]), int(texto_resolucion[1])]
 
-        configuracion = {"resolucion": valor_resolucion, "mus_volume": mus_volume, "sfx_volume": sfx_volume}
+        configuracion = {"resolucion": valor_resolucion, "mus_volume": mus_volume, "sfx_volume": sfx_volume,"debug_mode": opc_developer}
 
         return configuracion
     except Exception as error:
@@ -237,11 +239,12 @@ def cargar_config():
     music_vol = config.get("mus_volume") * 100
     sfx_vol = config.get("sfx_volume") * 100
     resolucion = str(config.get("resolucion")[0]) + " x " + str(config.get("resolucion")[1])
+    opc_developer = config.get("debug_mode")
 
     var.ui.SliderMusica.setValue(music_vol)
     var.ui.SliderEfectos.setValue(sfx_vol)
     var.ui.cmbResolucion.setCurrentText(resolucion)
-
+    var.ui.chkDeveloper.setChecked(opc_developer)
 
 def cargar_cmb_res():
     """
