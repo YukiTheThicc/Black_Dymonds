@@ -53,18 +53,6 @@ class Entity:
         self.box.x = new_pos[0]
         self.box.y = new_pos[1]
 
-    def check_coll(self, box_list):
-        """
-        This function gets all the rects that the entity has collided with at a given moment.
-        :param box_list:
-        :return:
-        """
-        boxes_hit = []
-        for box in box_list:
-            if self.box.colliderect(box):
-                boxes_hit.append(box)
-        return boxes_hit
-
     def set_action(self, action):
         """
         If the previous action was different, it sets the new action and resets the animation.
@@ -110,5 +98,4 @@ class Entity:
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
-        self.check_coll(tile_list)
         self.check_health(entity_list, pickable_list)

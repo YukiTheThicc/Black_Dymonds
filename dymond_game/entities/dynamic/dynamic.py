@@ -62,12 +62,24 @@ class Dynamic(Entity):
         mov[1] = round(self.vel[1])
         return mov
 
-    def move(self, box_list):
+    def check_coll(self, tile_list):
+        """
+        This function gets all the rects that the entity has collided with at a given moment.
+        :param tile_list:
+        :return:
+        """
+        tiles_hit = []
+        for tile in tile_list:
+            if self.box.colliderect(tile.box) and self.distance_to_point(tile.box.center) < 64:
+                tiles_hit.append(tile)
+        return tiles_hit
+
+    def move(self, tile_list):
         """
         Applies the movement to the entity; box_list contains the rects that the entity can physically collide with,
         meaning that they can't occupy the same space at the same time. It moves the entity on each axis and checks if
         it collided. If there is a collision, it moves the entity accordingly.
-        :param box_list:
+        :param tile_list:
         :return:
         """
         mov = self.set_movement()
@@ -76,23 +88,23 @@ class Dynamic(Entity):
         # Management of the x axis first
         self.box.x += mov[0]
         # Gets the list of boxes hit at each moment (can be empty)
-        boxes_hit = self.check_coll(box_list)
-        for box in boxes_hit:
+        tiles_hit = self.check_coll(tile_list)
+        for tile in tiles_hit:
             if mov[0] > 0:
-                self.box.right = box.left
+                self.box.right = tile.box.left
                 coll_register[0] = True
             elif mov[0] < 0:
-                self.box.left = box.right
+                self.box.left = tile.box.right
                 coll_register[1] = True
         # Management of the y axis
         self.box.y += mov[1]
-        boxes_hit = self.check_coll(box_list)
-        for box in boxes_hit:
+        tiles_hit = self.check_coll(tile_list)
+        for tile in tiles_hit:
             if mov[1] > 0:
-                self.box.bottom = box.top
+                self.box.bottom = tile.box.top
                 coll_register[2] = True
             elif mov[1] < 0:
-                self.box.top = box.bottom
+                self.box.top = tile.box.bottom
                 coll_register[3] = True
         return coll_register
 

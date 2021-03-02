@@ -26,7 +26,7 @@ def create_variables(player: str, conf: {}):
     game_data.SFX_VOLUME = conf["sfx_volume"]
     game_data.MUSIC_VOLUME = conf["mus_volume"]
     game_data.DEBUG_MODE = conf["debug_mode"]
-    game_data.CAMERA_OFFSET = (224, 182)
+    game_data.CAMERA_OFFSET = (220, 135)
     game_data.COLOR_KEY = (0, 255, 0)
     game_data.TIMER = 0
     game_data.CLK_TICKS = 60

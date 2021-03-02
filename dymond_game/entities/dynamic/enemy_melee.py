@@ -87,7 +87,7 @@ class Enemy_Melee(Dynamic):
                     self.accelerate([2, 0])
                 elif player_pos[0] < my_pos[0]:
                     self.accelerate([-2, 0])
-            if self.distance_to_player < 64 and player_pos[1] < my_pos[1] - 64:
+            if self.distance_to_player < 128 and player_pos[1] < my_pos[1] - 64:
                 self.start_jump()
             if self.distance_to_player <= self.range:
                 self.start_attack(player)

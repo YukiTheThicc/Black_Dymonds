@@ -11,6 +11,12 @@
         0.5,
         "res/sfx/game/hp_up_0.wav"
       ]
+    ],
+    "death_screen": [
+      [
+        0.5,
+        "res/sfx/game/death_screen.wav"
+      ]
     ]
   },
   "hit": {

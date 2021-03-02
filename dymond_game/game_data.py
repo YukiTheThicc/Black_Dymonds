@@ -10,6 +10,7 @@ global SFX_VOLUME
 global MUSIC_VOLUME
 global DEBUG_MODE
 points = 0
+platform_group = []
 
 global animations
 global audio

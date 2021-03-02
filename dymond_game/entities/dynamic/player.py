@@ -17,7 +17,7 @@ class Player(Dynamic):
     """
     HITBOX_SIZE = [20, 32]
     GRACE_FRAMES = 8
-    IMMUNITY_FRAMES = 30
+    IMMUNITY_FRAMES = 15
 
     def __init__(self, e_type: str, pos: [int, int], hp: int, max_speed: [int, int],
                  acc: float, friction: [float, float], j_strength: int, rof: int, has_mass=True, god_mode=False):
@@ -30,7 +30,7 @@ class Player(Dynamic):
         self.immunity_frames = 0
         self.step_timer = 0
         self.states = {"IDLE": True, "RUNNING_RIGHT": False, "RUNNING_LEFT": False, "JUMPING": False, "AIR_TIME": False,
-                       "LANDING": False, "AIMING_UP": False, "SHOOTING": False, "IS_SHOOTING": False}
+                       "AIMING_UP": False, "AIMING_DOWN": False, "SHOOTING": False, "IS_SHOOTING": False}
         self.flash = dymond.create_entity("flash", self.box.x, self.box.y, 8, 8, 0, True)
 
     def internal_action_setter(self):
@@ -38,6 +38,8 @@ class Player(Dynamic):
             self.states["IDLE"] = True
             if self.states["AIMING_UP"]:
                 self.set_action("IDLE_UP")
+            elif self.states["AIMING_DOWN"]:
+                self.set_action("IDLE_DOWN")
             else:
                 self.set_action("IDLE")
         else:
@@ -45,9 +47,11 @@ class Player(Dynamic):
         if abs(self.vel[0]) > 0.5 and not self.states["AIR_TIME"] and not self.states["JUMPING"]:
             if self.states["AIMING_UP"]:
                 self.set_action("RUN_UP")
+            elif self.states["AIMING_DOWN"]:
+                self.set_action("RUN_DOWN")
             else:
                 self.set_action("RUN")
-        if abs(self.vel[1]) > 0.5:
+        if self.vel[1] > 0.5 or self.vel[1] < -0.5:
             self.states["AIR_TIME"] = True
 
     def state_handler(self, proj_list):
@@ -67,8 +71,6 @@ class Player(Dynamic):
             self.jump()
         elif self.states["AIR_TIME"]:
             self.fall()
-        elif self.states["LANDING"]:
-            self.recover()
         if self.states["SHOOTING"]:
             self.shoot(proj_list)
 
@@ -95,6 +97,8 @@ class Player(Dynamic):
     def jump(self):
         if self.states["AIMING_UP"]:
             self.set_action("JUMPING_UP")
+        elif self.states["AIMING_DOWN"]:
+            self.set_action("JUMPING_DOWN")
         else:
             self.set_action("JUMPING")
         self.action_delay -= 1
@@ -107,6 +111,8 @@ class Player(Dynamic):
     def fall(self):
         if self.states["AIMING_UP"]:
             self.set_action("AIR_TIME_UP")
+        elif self.states["AIMING_DOWN"]:
+            self.set_action("AIR_TIME_DOWN")
         else:
             self.set_action("AIR_TIME")
         self.air_time += 1
@@ -115,15 +121,6 @@ class Player(Dynamic):
         self.vel[1] = 0
         self.air_time = 0
         self.states["AIR_TIME"] = False
-        if self.vel[1] > 8:
-            self.states["LANDING"] = True
-            self.action_delay = 8
-            self.set_action("LANDING")
-
-    def recover(self):
-        self.action_delay -= 1
-        if self.action_delay == 0:
-            self.states["LANDING"] = False
 
     def shoot(self, proj_list):
         frames_halt = 60 / self.rof
@@ -140,6 +137,15 @@ class Player(Dynamic):
                     off_pos = [pos[0] + 6, pos[1] - 16]
                     x_offset = 6
                 proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 20, 270))
+                self.flash.set_position(off_pos)
+            elif self.states["AIMING_DOWN"]:
+                if self.is_facing_left:
+                    off_pos = [pos[0] + 10, pos[1] - 16]
+                    x_offset = 10
+                else:
+                    off_pos = [pos[0] + 6, pos[1] - 16]
+                    x_offset = 6
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 20, 90))
                 self.flash.set_position(off_pos)
             elif self.is_facing_left:
                 off_pos = [pos[0] - 16, pos[1] + 4]
@@ -185,6 +191,11 @@ class Player(Dynamic):
                     angle = -90
                 self.flash.current_frame = pygame.transform.rotate(self.flash.current_frame, angle)
             frame.blit(self.flash.current_frame, (self.flash.box.x - scroll[0] - 6, self.flash.box.y - scroll[1]))
+            if self.states["AIMING_DOWN"]:
+                angle = -90
+                if self.flash.is_facing_left:
+                    angle = 90
+                self.flash.current_frame = pygame.transform.rotate(self.flash.current_frame, angle)
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 6, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):

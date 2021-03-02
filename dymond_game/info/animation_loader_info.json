@@ -47,6 +47,13 @@
       [10, "res/spr/player/soldier/idle_up/idle_up_2.png"],
       [10, "res/spr/player/soldier/idle_up/idle_up_3.png"]
     ],
+    "IDLE_DOWN":
+    [
+      [10, "res/spr/player/soldier/idle_up/idle_up_0.png"],
+      [10, "res/spr/player/soldier/idle_up/idle_up_1.png"],
+      [10, "res/spr/player/soldier/idle_up/idle_up_2.png"],
+      [10, "res/spr/player/soldier/idle_up/idle_up_3.png"]
+    ],
     "RUN":
     [
       [8, "res/spr/player/soldier/run/run_0.png"],
@@ -61,11 +68,22 @@
       [8, "res/spr/player/soldier/run_up/run_up_2.png"],
       [8, "res/spr/player/soldier/run_up/run_up_3.png"]
     ],
+    "RUN_DOWN":
+    [
+      [8, "res/spr/player/soldier/run_up/run_up_0.png"],
+      [8, "res/spr/player/soldier/run_up/run_up_1.png"],
+      [8, "res/spr/player/soldier/run_up/run_up_2.png"],
+      [8, "res/spr/player/soldier/run_up/run_up_3.png"]
+    ],
     "JUMPING":
     [
       [5, "res/spr/player/soldier/jump/jump_0.png"]
     ],
     "JUMPING_UP":
+    [
+      [5, "res/spr/player/soldier/jump_up/jump_up_0.png"]
+    ],
+    "JUMPING_DOWN":
     [
       [5, "res/spr/player/soldier/jump_up/jump_up_0.png"]
     ],
@@ -77,6 +95,13 @@
       [8, "res/spr/player/soldier/air/air_3.png"]
     ],
     "AIR_TIME_UP":
+    [
+      [8, "res/spr/player/soldier/air_up/air_up_0.png"],
+      [8, "res/spr/player/soldier/air_up/air_up_1.png"],
+      [8, "res/spr/player/soldier/air_up/air_up_2.png"],
+      [8, "res/spr/player/soldier/air_up/air_up_3.png"]
+    ],
+    "AIR_TIME_DOWN":
     [
       [8, "res/spr/player/soldier/air_up/air_up_0.png"],
       [8, "res/spr/player/soldier/air_up/air_up_1.png"],

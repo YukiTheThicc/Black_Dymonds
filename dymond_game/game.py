@@ -57,7 +57,7 @@ class Game:
         self.player.states["AIMING_UP"] = False
         self.player.states["SHOOTING"] = False
         self.difficulty_multi = 1 + 0.1 * self.level
-        self.time_left = 1 + 2 * self.level
+        self.time_left = 60 + 2 * self.level
         self.level += 1
         self.scenario.choose_tile_map()
         self.pickable_list = []
@@ -98,7 +98,7 @@ class Game:
             timer -= 1
 
     def end_level_transition(self):
-        pygame.mixer.music.fadeout(60)
+        pygame.mixer.music.fadeout(1000)
         fade_in_timer = 60
         after_fade_in_timer = 30
         mid_timer = 120
@@ -206,8 +206,13 @@ class Game:
 
     def scroll(self, player):
         player_pos = player.get_position()
+        aiming_offset = 0
+        if self.player.states["AIMING_UP"]:
+            aiming_offset = -50
+        if self.player.states["AIMING_DOWN"]:
+            aiming_offset = 50
         self.true_scroll[0] += (player_pos[0] - self.true_scroll[0] - game_data.CAMERA_OFFSET[0]) / 6
-        self.true_scroll[1] += (player_pos[1] - self.true_scroll[1] - game_data.CAMERA_OFFSET[1]) / 6
+        self.true_scroll[1] += (player_pos[1] - self.true_scroll[1] - game_data.CAMERA_OFFSET[1] + aiming_offset) / 6
         scroll = self.true_scroll.copy()
         scroll[0] = int(scroll[0])
         scroll[1] = int(scroll[1])
@@ -227,15 +232,15 @@ class Game:
                                                   game_data.points, self.player.hp, self.player.max_hp)
 
     def update(self):
-        self.player.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
+        self.player.update(self.player, self.scenario.active_tiles, self.entity_list, self.proj_list,
                            self.pickable_list)
         for proj in self.proj_list:
-            proj.update(self.scenario.active_collision_boxes, self.entity_list, self.proj_list)
+            proj.update(self.scenario.active_tiles, self.entity_list, self.proj_list)
         for obj in self.entity_list:
-            obj.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
+            obj.update(self.player, self.scenario.active_tiles, self.entity_list, self.proj_list,
                        self.pickable_list)
         for pickable in self.pickable_list:
-            pickable.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
+            pickable.update(self.player, self.scenario.active_tiles, self.entity_list, self.proj_list,
                             self.pickable_list)
 
     def check_end_level(self):
@@ -279,9 +284,10 @@ class Game:
 
     def player_death_screen(self):
         fade_in_timer = 60
-        pygame.mixer.music.fadeout(120)
+        pygame.mixer.music.fadeout(1000)
         back = pygame.Surface((1000, 700))
         offset = 0
+        play_sound = True
         while self.running:
             self.frame.blit(self.previous_frame, (0, 0))
             back.fill((0, 0, 0))
@@ -291,6 +297,9 @@ class Game:
                 fade_in_timer -= 1
                 offset += 12
             if fade_in_timer == 0:
+                if play_sound:
+                    random.choice(game_data.audio["game"]["death_screen"]).play()
+                    play_sound = False
                 self.frame.blit(dymond.text_data("[MISION FALLIDA]", "GIMONGUS", "white"), (30, 30))
                 self.frame.blit(dymond.text_data("Has muerto", "HUGE", "white"), (30, 60))
                 self.frame.blit(dymond.text_data("Llegaste al nivel " + str(self.level), "HUGE", "white"), (30, 90))
@@ -314,7 +323,6 @@ class Game:
         self.player.is_shooting = False
         self.player.is_aiming_up = False
         paused = True
-        pygame.mixer.music.fadeout(120)
         back = pygame.Surface(game_data.FRAME_SIZE, flags=pygame.SRCALPHA)
         while paused:
             self.frame.blit(self.previous_frame, (0, 0))
@@ -350,6 +358,8 @@ class Game:
                     self.player.start_jump()
                 if event.key == pygame.K_w:
                     self.player.states["AIMING_UP"] = True
+                if event.key == pygame.K_s:
+                    self.player.states["AIMING_DOWN"] = True
                 if event.key == pygame.K_LSHIFT:
                     self.player.states["SHOOTING"] = True
                 if event.key == pygame.K_ESCAPE:
@@ -362,6 +372,8 @@ class Game:
                     self.player.states["RUNNING_LEFT"] = False
                 if event.key == pygame.K_w:
                     self.player.states["AIMING_UP"] = False
+                if event.key == pygame.K_s:
+                    self.player.states["AIMING_DOWN"] = False
                 if event.key == pygame.K_LSHIFT:
                     self.player.states["SHOOTING"] = False
         return True

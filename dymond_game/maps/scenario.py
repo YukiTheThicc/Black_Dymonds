@@ -27,7 +27,7 @@ class Scenario:
         self.bkg_tile_map = []  # Tiles de fondo del escenario
         self.non_collision_group = []  # Lista de tiles que no tienen caja de colisiones (en el mapa de tiles normal)
         self.tiles = []  # Cajas de colision del escenario
-        self.active_collision_boxes = []  # Cajas de colision activas
+        self.active_tiles = []  # Tiles activos
         self.background = None  # Fondo del escenario
         self.player_spawn = []  # Posicion de aparicion del jugador en el escenario
         self.music_tracks = []  # Pistas de musica que usa el escenario
@@ -84,6 +84,7 @@ class Scenario:
             self.bkg_tile_set[tile_id] = tile
         bck_info = map_info["background"]
         self.non_collision_group = map_info["non_collision_group"]
+        game_data.platform_group = map_info["platform_group"]
         self.player_spawn = map_info["spawn_point"]
         self.enemies = map_info["enemies"]
         for music_track_path in map_info["music"]:
@@ -144,7 +145,7 @@ class Scenario:
         return False
 
     def render(self, frame: pygame.Surface, scroll: [int, int], player):
-        self.active_collision_boxes = []
+        self.active_tiles = []
         self.background.render(frame, scroll)
         y = 0
         for row in self.bkg_tile_map:
@@ -156,8 +157,8 @@ class Scenario:
                 x += 1
             y += 1
         for tile in self.tiles:
-            if player.distance_to_point(tile.box.center) < 512:
+            if player.distance_to_point(tile.box.center) < 384:
                 if tile.t_type not in self.non_collision_group:
-                    self.active_collision_boxes.append(tile.box)
+                    self.active_tiles.append(tile)
                 frame.blit(self.tile_set[tile.t_type], (tile.box.x - scroll[0],
                                                         tile.box.y - scroll[1]))

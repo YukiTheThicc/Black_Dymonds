@@ -20,8 +20,8 @@ class Projectile:
         :param tile_list:
         :return:
         """
-        for box in tile_list:
-            if self.box.colliderect(box):
+        for tile in tile_list:
+            if self.box.colliderect(tile.box):
                 return True
         for entity in entity_list:
             if entity.collides_with_projectiles:
