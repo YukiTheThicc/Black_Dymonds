@@ -33,7 +33,8 @@ def create_variables(player: str, conf: {}):
         "SMALL": pygame.font.SysFont("impact", 12),
         "BIG": pygame.font.SysFont("impact", 16),
         "HUGE": pygame.font.SysFont("impact", 20),
-        "GIGANTIC": pygame.font.SysFont("impact", 24)
+        "GIGANTIC": pygame.font.SysFont("impact", 24),
+        "GIMONGUS": pygame.font.SysFont("impact", 32)
     }
 
 
@@ -205,7 +206,7 @@ def text_data(to_text, font: str, color: str):
 
 
 def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: float, points: int, player_health: int,
-               show_fps: False, show_scroll: False):
+               player_max_hp: int, show_fps: False, show_scroll: False):
     fps = str(int(clock.get_fps())) + " FPS"
     if show_fps:
         frame.blit(text_data(fps, "SMALL", "black"), (380, 250))
@@ -219,15 +220,15 @@ def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: fl
 
     if player_health <= 0:
         player_health = 0
-    pygame.draw.rect(frame, (10, 10, 10), pygame.Rect(6, 6, 204, 20))
-    pygame.draw.rect(frame, (100, 10, 10), pygame.Rect(8, 8, 200, 16))
-    pygame.draw.rect(frame, (20, 150, 20), pygame.Rect(8, 8, player_health * 2, 16))
-    frame.blit(text_data(str(player_health) + " / 100", "BIG", "black"), (16, 24))
+    pygame.draw.rect(frame, (10, 10, 10), pygame.Rect(6, 6, 2 * player_max_hp + 4, 20))
+    pygame.draw.rect(frame, (100, 10, 10), pygame.Rect(8, 8, 2 * player_max_hp, 16))
+    pygame.draw.rect(frame, (20, 150, 20), pygame.Rect(8, 8, 2 * player_health, 16))
+    frame.blit(text_data(str(player_health) + " / " + str(player_max_hp), "BIG", "black"), (16, 24))
 
 
 def render_frame(display: pygame.display, frame: pygame.Surface, scroll, clock: pygame.time.Clock, time, points: int,
-                 player_health: int, show_fps: False, show_scroll: False):
-    render_hud(frame, scroll, clock, time, points, player_health, show_fps, show_scroll)
+                 player_health: int, player_max_hp, show_fps: False, show_scroll: False):
+    render_hud(frame, scroll, clock, time, points, player_health, player_max_hp, show_fps, show_scroll)
     display.blit(pygame.transform.scale(frame, game_data.RES), (0, 0))
     pygame.display.update()
     return frame.copy()

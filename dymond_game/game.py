@@ -26,20 +26,21 @@ class Game:
         self.display = pygame.display.set_mode(game_data.RES)  # Display donde se va a renderizar el frame
         self.frame = pygame.Surface(game_data.FRAME_SIZE)  # Frame donde se va a dibujar
 
-        self.previous_frame = None
+        self.previous_frame = None  # Frame anterior (para rellenar el buffer en las escenas)
         self.scenarios = ["andula_desert"]  # Lista de mapas
-        self.pickable_list = []
+        self.pickable_list = []  # Lista de elementos que se pueden recoger
         self.entity_list = []  # Lista de entidades
         self.proj_list = []  # Lista de proyectiles
-        self.player = dymond.create_player('player_soldier', (0, 0), 100, (5, 12), 2, (0.12, 0), 10, 10, True, False)
-        self.time_left = 0
-        self.scenario = None  # Mapa del nivel
+        self.player = dymond.create_player('player_soldier', (0, 0), 10, (5, 12), 2, (0.12, 0), 10, 10, True, False)
+        self.scenario = None  # Escenario actual
         self.true_scroll = [0, 0]  # Scroll (con valores decimales)
         self.clock = pygame.time.Clock()  # Reloj
+        self.time_left = 0  # Tiempo restante en el nivel
         self.has_changed_level = True
-        self.difficulty_multi = 0
+        self.has_changed_scenario = True
         self.levels_per_scenario = 5
         self.level = 0
+        self.difficulty_multi = 0
 
         self.change_map()  # Se selecciona un mapa
         game_data.drop_chances = dymond.load_drop_chances("dymond_game/info/drop_chances_info.json")
@@ -49,6 +50,7 @@ class Game:
     def change_map(self):
         if self.level % self.levels_per_scenario == 0:
             self.scenario = dymond.create_scenario(random.choice(self.scenarios))
+
         self.has_changed_level = True
         self.player.states["RUNNING_RIGHT"] = False
         self.player.states["RUNNING_LEFT"] = False
@@ -58,12 +60,97 @@ class Game:
         self.time_left = 60 + 2 * self.level
         self.level += 1
         self.scenario.choose_tile_map()
-        self.true_scroll = [0, 0]
         self.pickable_list = []
         self.entity_list = []
         self.proj_list = []
+        self.true_scroll = [self.scenario.player_spawn[0]/2, self.scenario.player_spawn[1]/2]
         self.player.set_position(self.scenario.player_spawn)
         self.entity_injector()
+
+    def new_level_transition(self, frames):
+        gc.collect()
+        timer = frames
+        back = pygame.Surface((500, 350))
+        offset = 0
+        percent = int(frames * 0.15)
+        pygame.mixer.music.load(random.choice(self.scenario.music_tracks))
+        pygame.mixer.music.set_volume(0.2 * game_data.MUSIC_VOLUME)
+        pygame.mixer.music.play()
+        while timer > 0:
+            self.frame.blit(self.previous_frame, (0, 0))
+            back.fill((0, 0, 0))
+            back.set_colorkey(game_data.COLOR_KEY)
+            self.frame.blit(pygame.transform.rotate(back, 75), (offset - 460, -90))
+            if timer > (frames - percent) or timer < percent:
+                offset += 10
+            else:
+                self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
+                self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)) + "s",
+                                                 "BIG", "white"), (120, 160))
+            self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
+            if timer == 100:
+                random.choice(game_data.audio["game"]["ready"]).play()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    timer = -1
+                    self.running = False
+            pygame.display.update()
+            self.clock.tick(game_data.CLK_TICKS)
+            timer -= 1
+
+    def end_level_transition(self):
+        pygame.mixer.music.fadeout(60)
+        fade_in_timer = 60
+        after_fade_in_timer = 30
+        mid_timer = 120
+        fade_out_timer = 60
+        if len(self.entity_list) == 0:
+            enemies_eliminated = True
+            points_print_height = 120
+        else:
+            mid_timer += 60
+            enemies_eliminated = False
+            points_print_height = 80
+        back = pygame.Surface((1000, 700))
+        offset = 0
+        finished = False
+        while not finished:
+            self.frame.blit(self.previous_frame, (0, 0))
+            back.fill((0, 0, 0))
+            back.set_colorkey(game_data.COLOR_KEY)
+            self.frame.blit(pygame.transform.rotate(back, -15), (offset - 1200, -300))
+            if fade_in_timer > 0:
+                fade_in_timer -= 1
+                offset += 12
+            if fade_in_timer == 0 and mid_timer > 0:
+                self.frame.blit(dymond.text_data("[Extraccion exitosa]", "GIMONGUS", "white"),
+                                (30, 30))
+                if enemies_eliminated:
+                    self.frame.blit(dymond.text_data("Todos los enemigos han sido eliminados", "SMALL", "white"),
+                                    (30, 60))
+                    self.frame.blit(dymond.text_data("Tiempo restante:", "BIG", "white"), (30, 100))
+                    self.frame.blit(dymond.text_data(str(round(self.time_left)) + "s", "BIG", "white"), (160, 100))
+                    if after_fade_in_timer > 0:
+                        after_fade_in_timer -= 1
+                    if round(self.time_left, 1) > 0 and after_fade_in_timer == 0:
+                        self.time_left -= 0.4
+                        game_data.points += 4
+                self.frame.blit(dymond.text_data("Puntos:", "BIG", "white"), (30, points_print_height))
+                self.frame.blit(dymond.text_data(str(game_data.points) + "p", "BIG", "white"),
+                                (160, points_print_height))
+            if round(self.time_left, 1) <= 0.0 and mid_timer > 0:
+                mid_timer -= 1
+            if mid_timer == 0:
+                fade_out_timer -= 1
+                offset += 16
+            if fade_out_timer == 0:
+                finished = True
+            self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
+            pygame.display.update()
+            self.clock.tick(game_data.CLK_TICKS)
+
+    def scenario_transition(self):
+        pass
 
     def create_enemy(self, pos: [int, int], e_type):
         if e_type == "knifer":
@@ -92,53 +179,6 @@ class Game:
                         enemies_to_spawn -= 1
                         injected = True
 
-    def end_level_transition(self):
-        fade_in_timer = 120
-        fade_out_timer = 120
-        back = pygame.Surface((500, 350))
-        offset = 0
-        percent = int(fade_in_timer * 0.15)
-        not_finished = True
-        while not_finished:
-            while fade_in_timer > 0:
-                fade_in_timer -= 1
-            pygame.display.update()
-            self.clock.tick(game_data.CLK_TICKS)
-
-    def new_level_transition(self, frames):
-        gc.collect()
-        timer = frames
-        back = pygame.Surface((500, 350))
-        offset = 0
-        percent = int(frames * 0.15)
-        pygame.mixer.music.load(random.choice(self.scenario.music_tracks))
-        pygame.mixer.music.set_volume(0.2 * game_data.MUSIC_VOLUME)
-        pygame.mixer.music.play()
-        while timer > 0:
-            self.frame.blit(self.previous_frame, (0, 0))
-            back.fill((0, 0, 0))
-            back.set_colorkey(game_data.COLOR_KEY)
-            self.frame.blit(pygame.transform.rotate(back, 75), (offset - 460, -91))
-            if timer > (frames - percent) or timer < percent:
-                offset += 10
-            else:
-                self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
-                self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)) + "s",
-                                                 "BIG", "white"), (120, 160))
-            self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
-            if timer == 100:
-                random.choice(game_data.audio["game"]["ready"]).play()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    timer = -1
-                    self.running = False
-            pygame.display.update()
-            self.clock.tick(game_data.CLK_TICKS)
-            timer -= 1
-
-    def scenario_transition(self):
-        pass
-
     def scroll(self, player):
         player_pos = player.get_position()
         self.true_scroll[0] += (player_pos[0] - self.true_scroll[0] - game_data.CAMERA_OFFSET[0]) / 6
@@ -159,7 +199,7 @@ class Game:
             pickable.draw(self.frame, scroll)
         self.player.draw(self.frame, scroll)
         self.previous_frame = dymond.render_frame(self.display, self.frame, scroll, self.clock, self.time_left,
-                                                  game_data.points, self.player.hp, True, True)
+                                                  game_data.points, self.player.hp, self.player.max_hp, True, True)
 
     def update(self):
         self.player.update(self.player, self.scenario.active_collision_boxes, self.entity_list, self.proj_list,
@@ -175,11 +215,12 @@ class Game:
 
     def check_end_level(self):
         if len(self.entity_list) == 0 or self.time_left <= 0:
+            self.end_level_transition()
             self.change_map()
 
     def check_player_death(self):
         if self.player.hp <= 0:
-            self.running = False
+            self.player_death_screen()
 
     def exit_game(self):
         data = metodos.buscar_jugador_nombre(game_data.PLAYER_NAME)
@@ -211,7 +252,22 @@ class Game:
             if not self.running:
                 self.exit_game()
 
-    def pause_menu(self):
+    def player_death_screen(self):
+        pygame.mixer.music.fadeout(120)
+        while self.running:
+            self.frame.blit(self.previous_frame, (0, 0))
+            self.frame.blit(dymond.text_data("[MISION FALLIDA]", "GIMONGUS", "black"), (30, 30))
+            self.frame.blit(dymond.text_data("Has muerto", "HUGE", "black"), (30, 50))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    self.running = False
+            self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
+            pygame.display.update()
+            self.clock.tick(game_data.CLK_TICKS)
+
+    def pause_screen(self):
         pygame.mixer.music.pause()
         self.player.states["RUNNING_RIGHT"] = False
         self.player.states["RUNNING_LEFT"] = False
@@ -244,7 +300,7 @@ class Game:
                 if event.key == pygame.K_LSHIFT:
                     self.player.states["SHOOTING"] = True
                 if event.key == pygame.K_ESCAPE:
-                    self.pause_menu()
+                    self.pause_screen()
                     return False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_d:
