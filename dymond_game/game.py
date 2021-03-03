@@ -21,14 +21,15 @@ class Game:
         pygame.mixer.set_num_channels(64)
         pygame.init()
         dymond.create_variables(player, conf)
+        game_data.points = 0
 
         self.running = True  # Controla se el juego se sigue ejecutando
         self.display = pygame.display.set_mode(game_data.RES)  # Display donde se va a renderizar el frame
         self.frame = pygame.Surface(game_data.FRAME_SIZE)  # Frame donde se va a dibujar
 
         self.previous_frame = None  # Frame anterior (para rellenar el buffer en las escenas)
-        self.scenarios = ["andula_desert"]  # Lista de mapas
-        self.played_scenarios = []
+        self.scenarios = ["andula_desert"]  # Lista de escenarios
+        self.played_scenarios = []  # Escenarios ya jugados
         self.pickable_list = []  # Lista de elementos que se pueden recoger
         self.entity_list = []  # Lista de entidades
         self.proj_list = []  # Lista de proyectiles
@@ -37,11 +38,12 @@ class Game:
         self.true_scroll = [0, 0]  # Scroll (con valores decimales)
         self.clock = pygame.time.Clock()  # Reloj
         self.time_left = 0  # Tiempo restante en el nivel
-        self.has_changed_level = True
-        self.has_changed_scenario = True
-        self.levels_per_scenario = 5
-        self.level = 0
-        self.difficulty_multi = 0
+        self.has_changed_level = True  # Variable que guarda si se ha cambiado de nivel
+        self.has_changed_scenario = True  # Variable que guarda si se ha cambiado de escenario
+        self.levels_per_scenario = 5  # Niveles por escenario
+        self.level = 0  # Nivel actual
+        self.difficulty_multi = 0  # Multiplicador de dificultad
+        self.number_of_enemies = 0  # Numero de enemigos de un nivel
 
         self.change_map()  # Se selecciona un mapa
         game_data.drop_chances = dymond.load_drop_chances("res/info/drop_chances_info.json")
@@ -86,6 +88,8 @@ class Game:
         self.true_scroll = [self.scenario.player_spawn[0]/2, self.scenario.player_spawn[1]/2]
         self.player.set_position(self.scenario.player_spawn)
         self.entity_injector()
+        self.number_of_enemies = len(self.entity_list)
+        game_data.killed_enemies = 0
 
     def new_level_transition(self, frames):
         """
@@ -140,6 +144,7 @@ class Game:
 
         :return:
         """
+        self.entity_list.clear()
         pygame.mixer.music.fadeout(1000)
         fade_in_timer = 60
         after_fade_in_timer = 30
@@ -257,6 +262,15 @@ class Game:
                         injected = True
 
     def scroll(self, player):
+        """
+
+        Calcula el scroll real del juego (float) y retorna los valores truncados (int) por el hecho de ser pixel art de
+        32 pixeles (para evitar pixeles montados). Añade un offset al scroll para ajustar la "camara" que varia segun
+        donde esta apuntando el jugador.
+
+        :param player:
+        :return:
+        """
         player_pos = player.get_position()
         aiming_offset = 0
         if self.player.states["AIMING_UP"]:
@@ -296,7 +310,7 @@ class Game:
                             self.pickable_list)
 
     def check_end_level(self):
-        if len(self.entity_list) == 0 or self.time_left <= 0:
+        if game_data.killed_enemies == self.number_of_enemies:
             self.end_level_transition()
             self.change_map()
 
@@ -336,6 +350,7 @@ class Game:
 
     def player_death_screen(self):
         fade_in_timer = 60
+        exit_delay = 120
         pygame.mixer.music.fadeout(1000)
         back = pygame.Surface((1000, 700))
         offset = 0
@@ -357,13 +372,16 @@ class Game:
                 self.frame.blit(dymond.text_data("Llegaste al nivel " + str(self.level), "HUGE", "white"), (30, 90))
                 self.frame.blit(dymond.text_data("Tus puntos: " + str(game_data.points) + "p", "HUGE", "white"),
                                 (30, 120))
-                self.frame.blit(dymond.text_data("Pulsa cualquier tecla ->", "SMALL", "white"),
-                                (350, 240))
+                if exit_delay > 0:
+                    exit_delay -= 1
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         self.running = False
-                    if event.type == pygame.KEYDOWN:
+                    if event.type == pygame.KEYDOWN and exit_delay == 0:
                         self.running = False
+                if exit_delay == 0:
+                    self.frame.blit(dymond.text_data("Pulsa cualquier tecla ->", "SMALL", "white"),
+                                    (350, 240))
             self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
             pygame.display.update()
             self.clock.tick(game_data.CLK_TICKS)

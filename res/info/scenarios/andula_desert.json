@@ -17,6 +17,7 @@
     "c": "res/scenarios/andula_desert/tiles/plat_mid.png",
     "d": "res/scenarios/andula_desert/tiles/plat_left.png",
     "e": "res/scenarios/andula_desert/tiles/plat_right.png",
+    "f": "res/scenarios/common/tiles/b_wire.png",
     "w": "res/scenarios/common/tiles/i_wall.png",
     "x": "res/scenarios/common/tiles/minen_left.png",
     "y": "res/scenarios/common/tiles/minen_right.png"

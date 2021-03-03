@@ -126,9 +126,12 @@ class Scenario:
             for column in row:
                 if column != '0':
                     new_tile = tile.Tile(column, (x * self.TILE_SIZE[0], y * self.TILE_SIZE[1]),
-                                         (self.TILE_SIZE[0], self.TILE_SIZE[1]), False)
+                                         (self.TILE_SIZE[0], self.TILE_SIZE[1]))
                     if new_tile.t_type in self.platform_group:
                         new_tile.is_platform = True
+                    if column == 'f':
+                        new_tile.does_damage = True
+                        new_tile.damage = 10
                     self.tiles.append(new_tile)
                 x += 1
             y += 1

@@ -11,6 +11,7 @@ global MUSIC_VOLUME
 global DEBUG_MODE
 points = 0
 platform_group = []
+killed_enemies = 0
 
 global animations
 global audio

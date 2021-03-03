@@ -1,6 +1,6 @@
 import random
 
-from dymond_game import game_data
+from dymond_game import game_data, dymond
 from dymond_game.entities.dynamic.dynamic import Dynamic
 
 
@@ -26,30 +26,35 @@ class Enemy_Melee(Dynamic):
         self.distance_to_player = 0
         self.damage = int(damage * dif_multi)
         self.points = int(points * dif_multi)
+        self.dead = False
 
     def internal_action_setter(self):
-        if self.action_timer == 0:
-            if self.vel[1] > 0.4 or self.vel[1] < -0.4:
-                self.set_action("AIR_TIME")
-            elif self.vel[0] > 0:
-                if self.is_facing_left:
-                    self.is_facing_left = False
-                self.set_action("RUN")
-            elif self.vel[0] < 0:
-                if not self.is_facing_left:
-                    self.is_facing_left = True
-                self.set_action("RUN")
-            else:
-                self.set_action("IDLE")
+        if not self.dead:
+            if self.action_timer == 0:
+                if self.vel[1] > 0.4 or self.vel[1] < -0.4:
+                    self.set_action("AIR_TIME")
+                elif self.vel[0] > 0:
+                    if self.is_facing_left:
+                        self.is_facing_left = False
+                    self.set_action("RUN")
+                elif self.vel[0] < 0:
+                    if not self.is_facing_left:
+                        self.is_facing_left = True
+                    self.set_action("RUN")
+                else:
+                    self.set_action("IDLE")
 
-    def action_handler(self, player):
+    def action_handler(self, player, entity_list, pickable_list):
         self.follow_player(player)
-        if self.action == "JUMPING":
-            self.jump()
-        elif self.action == "ATTACKING":
-            self.attack()
-        elif self.action == "AIR_TIME":
-            self.fall()
+        if not self.dead:
+            if self.action == "JUMPING":
+                self.jump()
+            elif self.action == "ATTACKING":
+                self.attack()
+            elif self.action == "AIR_TIME":
+                self.fall()
+        else:
+            self.die(entity_list, pickable_list)
         self.internal_action_setter()
 
     def start_jump(self):
@@ -67,6 +72,29 @@ class Enemy_Melee(Dynamic):
     def on_land(self):
         self.vel[1] = 0
         self.air_time = 0
+
+    def die(self, entity_list, pickable_list):
+        self.action_timer -= 1
+        if self.action_timer == 0:
+            chance = random.randint(0, 100)
+            pickable = ""
+            for drop_item in game_data.drop_chances[self.type]:
+                if chance <= game_data.drop_chances[self.type][drop_item]:
+                    pickable = drop_item
+            new_pickable = dymond.create_pickable(pickable, self.get_position())
+            if new_pickable:
+                pickable_list.append(new_pickable)
+            entity_list.remove(self)
+
+    def check_health(self, entity_list, pickable_list):
+        if self.hp <= 0 and not self.dead:
+            game_data.points += self.points
+            game_data.killed_enemies += 1
+            self.collides_with_projectiles = False
+            random.choice(game_data.audio[self.type]["death"]).play()
+            self.set_action("DYING")
+            self.dead = True
+            self.action_timer = 120
 
     def collision_handler(self, coll):
         if coll[0] or coll[1]:
@@ -113,17 +141,16 @@ class Enemy_Melee(Dynamic):
         :param scroll:
         :return:
         """
-        if self.action == "ATTACKING":
+        if self.action == "ATTACKING" or self.action == "DYING":
             self.animate(False)
         else:
             self.animate(True)
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
-        print(str(self.hp))
         self.distance_to_player = self.distance_to_point(player.box.center)
         if self.distance_to_player <= 320:
             self.check_health(entity_list, pickable_list)
             coll = self.move(tile_list)
             self.collision_handler(coll)
-            self.action_handler(player)
+            self.action_handler(player, entity_list, pickable_list)
