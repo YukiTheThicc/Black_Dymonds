@@ -26,7 +26,7 @@ def create_variables(player: str, conf: {}):
     game_data.SFX_VOLUME = conf["sfx_volume"]
     game_data.MUSIC_VOLUME = conf["mus_volume"]
     game_data.DEBUG_MODE = conf["debug_mode"]
-    game_data.CAMERA_OFFSET = (220, 135)
+    game_data.CAMERA_OFFSET = (230, 135)
     game_data.COLOR_KEY = (0, 255, 0)
     game_data.TIMER = 0
     game_data.CLK_TICKS = 60
@@ -193,7 +193,7 @@ def load_drop_chances(json_path: str):
 
 def create_scenario(map_name: str):
     new_map = scenario.Scenario()
-    f = open("dymond_game/info/scenarios/" + map_name + ".json", 'r')
+    f = open("res/info/scenarios/" + map_name + ".json", 'r')
     map_info = json.load(f)
     f.close()
     new_map.load(map_info)

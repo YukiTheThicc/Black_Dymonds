@@ -109,7 +109,7 @@ class Dynamic(Entity):
                     self.box.top = tile.box.bottom
                     coll_register[3] = True
             else:
-                if mov[1] > 0 and (self.box.bottom - tile.box.top) <= 5:
+                if mov[1] > 0 and (self.box.bottom - tile.box.top) <= 16:
                     self.box.bottom = tile.box.top
                     coll_register[2] = True
         return coll_register

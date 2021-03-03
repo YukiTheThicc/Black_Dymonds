@@ -1,0 +1,69 @@
+{
+  "id": "andula_desert",
+  "name": "Desierto de Andula",
+  "tile_paths":
+  {
+    "1": "res/scenarios/andula_desert/tiles/mid.png",
+    "2": "res/scenarios/andula_desert/tiles/top.png",
+    "3": "res/scenarios/andula_desert/tiles/top_left.png",
+    "4": "res/scenarios/andula_desert/tiles/top_right.png",
+    "5": "res/scenarios/andula_desert/tiles/top_left_corner.png",
+    "6": "res/scenarios/andula_desert/tiles/top_right_corner.png",
+    "7": "res/scenarios/andula_desert/tiles/wall_left.png",
+    "8": "res/scenarios/andula_desert/tiles/wall_right.png",
+    "9": "res/scenarios/andula_desert/tiles/bot.png",
+    "a": "res/scenarios/andula_desert/tiles/bot_left_corner.png",
+    "b": "res/scenarios/andula_desert/tiles/bot_right_corner.png",
+    "c": "res/scenarios/andula_desert/tiles/plat_mid.png",
+    "d": "res/scenarios/andula_desert/tiles/plat_left.png",
+    "e": "res/scenarios/andula_desert/tiles/plat_right.png",
+    "w": "res/scenarios/common/tiles/i_wall.png",
+    "x": "res/scenarios/common/tiles/minen_left.png",
+    "y": "res/scenarios/common/tiles/minen_right.png"
+  },
+  "bkg_tile_paths":
+  {
+    "1": "res/scenarios/andula_desert/tiles/back_mid.png",
+    "2": "res/scenarios/andula_desert/tiles/back_left.png",
+    "3": "res/scenarios/andula_desert/tiles/back_right.png",
+    "4": "res/scenarios/andula_desert/tiles/pole.png"
+  },
+  "maps": ["andula_desert_0", "andula_desert_1"],
+  "non_collision_group": ["1", "3", "4", "x", "y"],
+  "platform_group": ["c", "d", "e"],
+  "enemies":
+  {
+    "knifer": 100
+  },
+  "spawn_point": [300, 400],
+  "music": ["res/mus/act_on_instinct.wav", "res/mus/radio.wav", "res/mus/warfare.wav"],
+  "background": {
+    "type": "parallax",
+    "layers": {
+      "static": "res/scenarios/andula_desert/bckgnd/static.png",
+      "layers": [
+        {
+          "path": "res/scenarios/andula_desert/bckgnd/layer_1.png",
+          "offset": [0, 80],
+          "ratio": 0.05,
+          "vertical": -1,
+          "movement": 0
+        },
+        {
+          "path": "res/scenarios/andula_desert/bckgnd/layer_2.png",
+          "offset": [0, 40],
+          "ratio": 0.1,
+          "vertical": -1,
+          "movement": -2
+        },
+        {
+          "path": "res/scenarios/andula_desert/bckgnd/layer_3.png",
+          "offset": [0, 90],
+          "ratio": 0.15,
+          "vertical": -1,
+          "movement": 0
+        }
+      ]
+    }
+  }
+}

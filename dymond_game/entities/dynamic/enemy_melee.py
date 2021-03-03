@@ -120,6 +120,7 @@ class Enemy_Melee(Dynamic):
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 8, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
+        print(str(self.hp))
         self.distance_to_player = self.distance_to_point(player.box.center)
         if self.distance_to_player <= 320:
             self.check_health(entity_list, pickable_list)

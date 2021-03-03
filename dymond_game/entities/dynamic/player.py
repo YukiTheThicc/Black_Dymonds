@@ -136,27 +136,27 @@ class Player(Dynamic):
                 else:
                     off_pos = [pos[0] + 6, pos[1] - 16]
                     x_offset = 6
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 15, 270))
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 2, 2, 10, 15, 270))
                 self.flash.set_position(off_pos)
             elif self.states["AIMING_DOWN"]:
                 if self.is_facing_left:
-                    off_pos = [pos[0] + 10, pos[1] - 16]
-                    x_offset = 10
+                    off_pos = [pos[0] + 7, pos[1] + 32]
+                    x_offset = 7
                 else:
-                    off_pos = [pos[0] + 6, pos[1] - 16]
-                    x_offset = 6
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 15, 90))
+                    off_pos = [pos[0] + 9, pos[1] + 32]
+                    x_offset = 9
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 2, 2, 10, 15, 90))
                 self.flash.set_position(off_pos)
             elif self.is_facing_left:
                 off_pos = [pos[0] - 16, pos[1] + 4]
                 self.flash.set_position(off_pos)
                 self.flash.is_facing_left = True
-                proj_list.append(dymond.create_projectile("bullet", pos[0], pos[1] + 10, 4, 4, 10, 15, 180))
+                proj_list.append(dymond.create_projectile("bullet", pos[0], pos[1] + 10, 2, 2, 10, 15, 180))
             else:
                 off_pos = [pos[0] + 32, pos[1] + 4]
                 self.flash.set_position(off_pos)
                 self.flash.is_facing_left = False
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 10, 4, 4, 10, 15, 0))
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 10, 2, 2, 10, 15, 0))
             random.choice(game_data.audio[self.type]["shot"]).play()
 
     def take_damage(self, damage: int):
@@ -190,12 +190,12 @@ class Player(Dynamic):
                 if self.flash.is_facing_left:
                     angle = -90
                 self.flash.current_frame = pygame.transform.rotate(self.flash.current_frame, angle)
-            frame.blit(self.flash.current_frame, (self.flash.box.x - scroll[0] - 6, self.flash.box.y - scroll[1]))
-            if self.states["AIMING_DOWN"]:
+            elif self.states["AIMING_DOWN"]:
                 angle = -90
                 if self.flash.is_facing_left:
                     angle = 90
                 self.flash.current_frame = pygame.transform.rotate(self.flash.current_frame, angle)
+            frame.blit(self.flash.current_frame, (self.flash.box.x - scroll[0] - 6, self.flash.box.y - scroll[1]))
         frame.blit(self.current_frame, (self.box.x - scroll[0] - 6, self.box.y - scroll[1]))
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):

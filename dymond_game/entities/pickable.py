@@ -24,6 +24,7 @@ class HP_boost(Pickable):
             pickable_list.remove(self)
 
     def update(self, player, tile_list, entity_list, proj_list, pickable_list):
+        self.move(tile_list)
         if self.distance_to_point(player.box.center) < 320:
             self.check_coll(tile_list)
             if self.box.colliderect(player.box):

@@ -22,6 +22,8 @@ class Projectile:
         """
         for tile in tile_list:
             if self.box.colliderect(tile.box):
+                if tile.is_platform:
+                    return False
                 return True
         for entity in entity_list:
             if entity.collides_with_projectiles:

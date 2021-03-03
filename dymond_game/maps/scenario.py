@@ -160,8 +160,7 @@ class Scenario:
                 x += 1
             y += 1
         for tile in self.tiles:
-            if player.distance_to_point(tile.box.center) < 384:
-                if tile.t_type not in self.non_collision_group:
-                    self.active_tiles.append(tile)
-                frame.blit(self.tile_set[tile.t_type], (tile.box.x - scroll[0],
-                                                        tile.box.y - scroll[1]))
+            if tile.t_type not in self.non_collision_group:
+                self.active_tiles.append(tile)
+            frame.blit(self.tile_set[tile.t_type], (tile.box.x - scroll[0],
+                                                    tile.box.y - scroll[1]))

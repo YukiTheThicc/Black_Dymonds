@@ -27,7 +27,7 @@ class Game:
         self.frame = pygame.Surface(game_data.FRAME_SIZE)  # Frame donde se va a dibujar
 
         self.previous_frame = None  # Frame anterior (para rellenar el buffer en las escenas)
-        self.scenarios = ["andula_desert", "nortovak_mountains"]  # Lista de mapas
+        self.scenarios = ["andula_desert"]  # Lista de mapas
         self.played_scenarios = []
         self.pickable_list = []  # Lista de elementos que se pueden recoger
         self.entity_list = []  # Lista de entidades
@@ -44,9 +44,9 @@ class Game:
         self.difficulty_multi = 0
 
         self.change_map()  # Se selecciona un mapa
-        game_data.drop_chances = dymond.load_drop_chances("dymond_game/info/drop_chances_info.json")
-        game_data.animations = dymond.load_animations("dymond_game/info/animation_loader_info.json")
-        game_data.audio = dymond.load_audio("dymond_game/info/audio_loader_info.json")
+        game_data.drop_chances = dymond.load_drop_chances("res/info/drop_chances_info.json")
+        game_data.animations = dymond.load_animations("res/info/animation_loader_info.json")
+        game_data.audio = dymond.load_audio("res/info/audio_loader_info.json")
 
     def change_map(self):
         """
@@ -73,6 +73,7 @@ class Game:
         self.player.states["RUNNING_RIGHT"] = False
         self.player.states["RUNNING_LEFT"] = False
         self.player.states["AIMING_UP"] = False
+        self.player.states["AIMING_DOWN"] = False
         self.player.states["SHOOTING"] = False
         self.difficulty_multi = 1 + 0.1 * self.level
         self.time_left = 60 + 2 * self.level
@@ -142,19 +143,21 @@ class Game:
         pygame.mixer.music.fadeout(1000)
         fade_in_timer = 60
         after_fade_in_timer = 30
-        mid_timer = 120
+        mid_timer = 60
         fade_out_timer = 60
+        after_level_points_timer = 120
+        level_points = 100 * self.level
         if len(self.entity_list) == 0:
             enemies_eliminated = True
             points_print_height = 120
         else:
-            mid_timer += 60
             enemies_eliminated = False
-            points_print_height = 80
+            points_print_height = 100
         back = pygame.Surface((1000, 700))
         offset = 0
         finished = False
-        sound_played = False
+        time_left_sound = True
+        level_points_sound = True
         while not finished:
             self.frame.blit(self.previous_frame, (0, 0))
             back.fill((0, 0, 0))
@@ -163,7 +166,7 @@ class Game:
             if fade_in_timer > 0:
                 fade_in_timer -= 1
                 offset += 12
-            if fade_in_timer == 0 and mid_timer > 0:
+            if fade_in_timer == 0 and after_level_points_timer > 0:
                 self.frame.blit(dymond.text_data("[Extraccion exitosa]", "GIMONGUS", "white"),
                                 (30, 30))
                 if enemies_eliminated:
@@ -174,19 +177,31 @@ class Game:
                     if after_fade_in_timer > 0:
                         after_fade_in_timer -= 1
                     if round(self.time_left, 1) > 0 and after_fade_in_timer == 0:
-                        if not sound_played:
+                        if time_left_sound:
                             pygame.mixer.music.load("res/sfx/game/swoop.wav")
                             pygame.mixer.music.play(-1)
-                            sound_played = True
+                            time_left_sound = False
                         self.time_left -= 0.4
                         game_data.points += 4
+                if round(self.time_left, 1) <= 0.0 and mid_timer > 0:
+                    mid_timer -= 1
+                    pygame.mixer.music.stop()
+                if level_points > 0 and mid_timer == 0:
+                    if level_points_sound:
+                        pygame.mixer.music.load("res/sfx/game/swoop.wav")
+                        pygame.mixer.music.play(-1)
+                        level_points_sound = False
+                    level_points -= self.level
+                    game_data.points += self.level
+                self.frame.blit(dymond.text_data("Nivel: ", "BIG", "white"), (30, 80))
+                self.frame.blit(dymond.text_data(str(level_points) + "p", "BIG", "white"), (160, 80))
                 self.frame.blit(dymond.text_data("Puntos:", "BIG", "white"), (30, points_print_height))
                 self.frame.blit(dymond.text_data(str(game_data.points) + "p", "BIG", "white"),
                                 (160, points_print_height))
-            if round(self.time_left, 1) <= 0.0 and mid_timer > 0:
-                mid_timer -= 1
+            if level_points <= 0 and after_level_points_timer > 0:
                 pygame.mixer.music.stop()
-            if mid_timer == 0:
+                after_level_points_timer -= 1
+            if after_level_points_timer == 0:
                 fade_out_timer -= 1
                 offset += 16
             if fade_out_timer == 0:
@@ -357,8 +372,9 @@ class Game:
         pygame.mixer.music.pause()
         self.player.states["RUNNING_RIGHT"] = False
         self.player.states["RUNNING_LEFT"] = False
-        self.player.is_shooting = False
-        self.player.is_aiming_up = False
+        self.player.states["AIMING_DOWN"] = False
+        self.player.states["AIMING_UP"] = False
+        self.player.states["SHOOTING"] = False
         paused = True
         back = pygame.Surface(game_data.FRAME_SIZE, flags=pygame.SRCALPHA)
         while paused:
