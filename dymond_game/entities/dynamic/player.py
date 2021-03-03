@@ -136,7 +136,7 @@ class Player(Dynamic):
                 else:
                     off_pos = [pos[0] + 6, pos[1] - 16]
                     x_offset = 6
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 20, 270))
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 15, 270))
                 self.flash.set_position(off_pos)
             elif self.states["AIMING_DOWN"]:
                 if self.is_facing_left:
@@ -145,18 +145,18 @@ class Player(Dynamic):
                 else:
                     off_pos = [pos[0] + 6, pos[1] - 16]
                     x_offset = 6
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 20, 90))
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + x_offset, pos[1] + 8, 4, 4, 10, 15, 90))
                 self.flash.set_position(off_pos)
             elif self.is_facing_left:
                 off_pos = [pos[0] - 16, pos[1] + 4]
                 self.flash.set_position(off_pos)
                 self.flash.is_facing_left = True
-                proj_list.append(dymond.create_projectile("bullet", pos[0], pos[1] + 10, 4, 4, 10, 20, 180))
+                proj_list.append(dymond.create_projectile("bullet", pos[0], pos[1] + 10, 4, 4, 10, 15, 180))
             else:
                 off_pos = [pos[0] + 32, pos[1] + 4]
                 self.flash.set_position(off_pos)
                 self.flash.is_facing_left = False
-                proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 10, 4, 4, 10, 20, 0))
+                proj_list.append(dymond.create_projectile("bullet", pos[0] + 8, pos[1] + 10, 4, 4, 10, 15, 0))
             random.choice(game_data.audio[self.type]["shot"]).play()
 
     def take_damage(self, damage: int):

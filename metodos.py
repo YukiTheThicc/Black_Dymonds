@@ -9,10 +9,12 @@ from main import *
 def conexion_base_de_datos(name):
     """
 
-    :param name:
-    :type name:
-    :return:
-    :rtype:
+    Nos conectamos a la BBDD. Para ello, recibimos el nombre de la misma.
+
+    :param name: name
+    :type name: String
+    :return: True or False
+    :rtype: Boolean
     """
     db = QtSql.QSqlDatabase.addDatabase('QSQLITE')
     db.setDatabaseName(name)
@@ -30,8 +32,10 @@ def conexion_base_de_datos(name):
 def cargar_jugadores():
     """
 
-    :return:
-    :rtype:
+    Añadimos un nuevo jugador a la BBDD.
+    Seleccionamos el nombre del editText, le quitamos todos los espacios en blanco que tenga
+    y lo añadimos si el nombre, aún no está registrado.
+
     """
     nombre_jugador = var.ui.editNombre.text().replace(' ', '')
 
@@ -78,26 +82,10 @@ def modificar_jugador(nombre, puntos, nivel):
         else:
             print('Error modificar jugadores:', query.lastError().text())
 
-
-def borrar_jugadores(nombre):
-    """
-
-        :param nombre: str
-    """
-    if nombre != '':
-        query = QtSql.QSqlQuery()
-        query.prepare('delete from Jugadores where nombre = :nombreJugador')
-        query.bindValue(':nombreJugador', str(nombre))
-        if query.exec_():
-            mostrar_nombre_jugadores()
-        else:
-            print('Error al borrar jugador')
-    else:
-        print('No hay nombre')
-
-
 def buscar_jugador_nombre(nombre):
     """
+
+    Recibimos el nombre del jugador y lo buscamos en la base de datos para retornar todos sus datos.
 
     :param nombre: str
     :return: datos or None
@@ -117,6 +105,13 @@ def buscar_jugador_nombre(nombre):
 
 
 def mostrar_jugador_tabla():
+
+    """
+
+    Método que cuando buscamos a un jugador, nos muestra sus datos.
+
+    """
+
     nombre = var.ui.editNombre.text()
     datos = buscar_jugador_nombre(nombre)
 
@@ -138,6 +133,13 @@ def mostrar_jugador_tabla():
 
 
 def mostrar_nombre_jugadores():
+
+    """
+
+    Método para mostrar todos los jugadores que hay en la BBDD
+
+    """
+
     index = 0
     query = QtSql.QSqlQuery()
     query.prepare('select * from Jugadores order by puntos desc')
@@ -166,6 +168,10 @@ def mostrar_nombre_jugadores():
 def seleccion_jugador():
     """
 
+    Método que cuando hacemos click en un jugador de la tabla, nos carga su nombre en un label.
+
+    Como hemos hecho click en un jugador, el botón de empezar pasa a estar disponible.
+
     """
     try:
         fila = var.ui.tablaJugadores.selectedItems()
@@ -173,16 +179,16 @@ def seleccion_jugador():
             fila = [dato.text() for dato in fila]
         var.ui.lblJugador.setText(str(fila[0]))
 
-        if var.ui.lblJugador.text() != '':
-            var.ui.btnEmpezar.setEnabled(True)
-        else:
-            var.ui.btnEmpezar.setDisabled(True)
+        var.ui.btnEmpezar.setEnabled(True)
+
     except Exception as error:
         print('Error al seleccionar jugador : ' + str(error))
 
 
 def salir():
     """
+
+    Método que llama a la ventana de aviso de salir.
 
     """
     try:
@@ -197,6 +203,8 @@ def salir():
 
 def recoger_configuracion():
     """
+
+    Método que lee las opciones que escogió el usuario y devulve los datos.
 
     :return: configuracion
     :rtype: diccionario
@@ -220,6 +228,8 @@ def recoger_configuracion():
 def guardar_config():
     """
 
+    Método que guarda los datos de configuración
+
     """
     datos = recoger_configuracion()
 
@@ -230,6 +240,8 @@ def guardar_config():
 
 def cargar_config():
     """
+
+    Método que carga los datos de configuración que han sido guardados previamente.
 
     """
     f = open("config.json", 'r')
@@ -249,6 +261,7 @@ def cargar_config():
 def cargar_cmb_res():
     """
 
+    Método que carga las resoluciones disponibles en el comboBox.
 
     """
     try:

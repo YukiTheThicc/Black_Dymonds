@@ -27,7 +27,8 @@ class Game:
         self.frame = pygame.Surface(game_data.FRAME_SIZE)  # Frame donde se va a dibujar
 
         self.previous_frame = None  # Frame anterior (para rellenar el buffer en las escenas)
-        self.scenarios = ["andula_desert"]  # Lista de mapas
+        self.scenarios = ["andula_desert", "nortovak_mountains"]  # Lista de mapas
+        self.played_scenarios = []
         self.pickable_list = []  # Lista de elementos que se pueden recoger
         self.entity_list = []  # Lista de entidades
         self.proj_list = []  # Lista de proyectiles
@@ -48,8 +49,25 @@ class Game:
         game_data.audio = dymond.load_audio("dymond_game/info/audio_loader_info.json")
 
     def change_map(self):
+        """
+
+        Resetea los estados del jugador y cambia el mapa del juego. Cada 5 niveles escoge un nuevo escenario de la lista
+        de escenarios, quitandolo de la lista y metiendolo en la lista de escenarios jugados. Cuando se han jugado todos
+        los escenarios se vuelcan de la lista de escenarios jugados a la de escenarios disponibles.
+
+        Cuando cambia de nivel aumenta el multiplicador de dificultad y el nivel, spawnea el jugador en la posicion de
+        spawn del escenario e injecta los enemigos de forma aleatoria.
+
+        :return:
+        """
         if self.level % self.levels_per_scenario == 0:
-            self.scenario = dymond.create_scenario(random.choice(self.scenarios))
+            if len(self.scenarios) == 0:
+                self.scenarios = self.played_scenarios.copy()
+                self.played_scenarios.clear()
+            scenario = random.choice(self.scenarios)
+            self.scenarios.remove(scenario)
+            self.played_scenarios.append(scenario)
+            self.scenario = dymond.create_scenario(scenario)
 
         self.has_changed_level = True
         self.player.states["RUNNING_RIGHT"] = False
@@ -59,6 +77,7 @@ class Game:
         self.difficulty_multi = 1 + 0.1 * self.level
         self.time_left = 60 + 2 * self.level
         self.level += 1
+
         self.scenario.choose_tile_map()
         self.pickable_list = []
         self.entity_list = []
@@ -68,6 +87,14 @@ class Game:
         self.entity_injector()
 
     def new_level_transition(self, frames):
+        """
+
+        Transicion entre niveles. Es una escena scripteada en la que se dibuja un rect rotado para hacer de slider donde
+        hacer el blit del texto del nuevo nivel.
+
+        :param frames:
+        :return:
+        """
         timer = frames
         back = pygame.Surface((500, 350))
         offset = 0
@@ -83,6 +110,11 @@ class Game:
             if timer > (frames - percent) or timer < percent:
                 offset += 10
             else:
+                texto = dymond.text_data(str(self.scenario.name), "GIMONGUS", "white")
+                rect: pygame.rect.Rect = texto.get_rect()
+                rect.center = self.frame.get_rect().center
+                rect.y = 70
+                self.frame.blit(texto, rect)
                 self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
                 self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)) + "s",
                                                  "BIG", "white"), (120, 160))
@@ -98,6 +130,15 @@ class Game:
             timer -= 1
 
     def end_level_transition(self):
+        """
+
+        Escena de fin de nivel. Reduce la musica, y a traves de varias fases, muestra los resultados del final del nivel
+        en una pantalla que se abre con un rect slider inclinado. Si el jugador ha terminado a traves de eliminar a
+        todos los enemigos la escena le muestra el tiempo restante y se lo suma (1 punto por 0.1 segundos), mostrandole
+        al usuario el proceso.
+
+        :return:
+        """
         pygame.mixer.music.fadeout(1000)
         fade_in_timer = 60
         after_fade_in_timer = 30
@@ -113,6 +154,7 @@ class Game:
         back = pygame.Surface((1000, 700))
         offset = 0
         finished = False
+        sound_played = False
         while not finished:
             self.frame.blit(self.previous_frame, (0, 0))
             back.fill((0, 0, 0))
@@ -132,6 +174,10 @@ class Game:
                     if after_fade_in_timer > 0:
                         after_fade_in_timer -= 1
                     if round(self.time_left, 1) > 0 and after_fade_in_timer == 0:
+                        if not sound_played:
+                            pygame.mixer.music.load("res/sfx/game/swoop.wav")
+                            pygame.mixer.music.play(-1)
+                            sound_played = True
                         self.time_left -= 0.4
                         game_data.points += 4
                 self.frame.blit(dymond.text_data("Puntos:", "BIG", "white"), (30, points_print_height))
@@ -139,6 +185,7 @@ class Game:
                                 (160, points_print_height))
             if round(self.time_left, 1) <= 0.0 and mid_timer > 0:
                 mid_timer -= 1
+                pygame.mixer.music.stop()
             if mid_timer == 0:
                 fade_out_timer -= 1
                 offset += 16
@@ -148,42 +195,32 @@ class Game:
             pygame.display.update()
             self.clock.tick(game_data.CLK_TICKS)
 
-    def scenario_transition(self):
-        timer = 60
-        back = pygame.Surface((500, 350))
-        offset = 0
-        pygame.mixer.music.load(random.choice(self.scenario.music_tracks))
-        pygame.mixer.music.set_volume(0.2 * game_data.MUSIC_VOLUME)
-        pygame.mixer.music.play()
-        while timer > 0:
-            self.frame.blit(self.previous_frame, (0, 0))
-            back.fill((0, 0, 0))
-            back.set_colorkey(game_data.COLOR_KEY)
-            self.frame.blit(pygame.transform.rotate(back, 75), (offset - 460, -90))
-            if timer > 0:
-                offset += 10
-            else:
-                self.frame.blit(dymond.text_data("Nivel: " + str(self.level), "GIGANTIC", "white"), (130, 110))
-                self.frame.blit(dymond.text_data("Tiempo para la extracción:  " + str(round(self.time_left)) + "s",
-                                                 "BIG", "white"), (120, 160))
-            self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
-            if timer == 100:
-                random.choice(game_data.audio["game"]["ready"]).play()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    timer = -1
-                    self.running = False
-            pygame.display.update()
-            self.clock.tick(game_data.CLK_TICKS)
-            timer -= 1
-
     def create_enemy(self, pos: [int, int], e_type):
+        """
+
+        Metodo que crea una entidad enemiga de un tipo predefinido segun el tipo que se le pasa como parametro. Si se
+        el tipo de entidad esta implementado, le asigna la posicion pasada por parametro.
+
+        :param pos:
+        :param e_type:
+        :return:
+        """
         if e_type == "knifer":
             return dymond.create_knifer((pos[0], pos[1]), self.difficulty_multi)
         else:
             return None
 
     def entity_injector(self):
+        """
+
+        Metodo que inyecta entidades de forma aleatoria en el mapa. Lo hace a traves de calcular una posicion aleatoria
+        dentro del mapa (una posicion multiplo del tamaño del tile del mapa). Proyecta un rectangulo en el mapa, si
+        detecta colision, entonces puede inyectar la entidad si tiene hueco encima de ese tile. Para comprobarlo,
+        proyecta otro rect y comprueba si hay colision con ese segundo rectangulo con algun tile. Si no encuentra
+        colision inyecta la entidad encima del primer tile y si no, genera nuevas posiciones y lo vuelve a intentar.
+
+        :return:
+        """
         enemies_to_spawn = round(10 * self.difficulty_multi)
         while enemies_to_spawn > 0:
             injected = False
@@ -333,14 +370,22 @@ class Game:
             rect: pygame.rect.Rect = texto.get_rect()
             rect.center = self.frame.get_rect().center
             self.frame.blit(texto, rect)
+            texto = dymond.text_data("Pulsa [ESC] para salir", "SMALL", "black")
+            rect: pygame.rect.Rect = texto.get_rect()
+            rect.center = self.frame.get_rect().center
+            rect.y += 30
+            self.frame.blit(texto, rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     paused = False
                     self.running = False
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_p:
                         pygame.mixer.music.unpause()
                         paused = False
+                    if event.key == pygame.K_ESCAPE:
+                        paused = False
+                        self.running = False
             self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
             pygame.display.update()
             self.clock.tick(game_data.CLK_TICKS)
@@ -362,7 +407,7 @@ class Game:
                     self.player.states["AIMING_DOWN"] = True
                 if event.key == pygame.K_LSHIFT:
                     self.player.states["SHOOTING"] = True
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_p:
                     self.pause_screen()
                     return False
             if event.type == pygame.KEYUP:

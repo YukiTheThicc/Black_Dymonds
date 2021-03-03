@@ -124,8 +124,8 @@ class Scenario:
             x = 0
             for column in row:
                 if column != '0':
-                    new_tile = tile.Tile(column, (x * self.TILE_SIZE[0], y * self.TILE_SIZE[1]), (self.TILE_SIZE[0],
-                                                                                                  self.TILE_SIZE[1]))
+                    new_tile = tile.Tile(column, (x * self.TILE_SIZE[0], y * self.TILE_SIZE[1]),
+                                         (self.TILE_SIZE[0], self.TILE_SIZE[1]), False)
                     self.tiles.append(new_tile)
                 x += 1
             y += 1
