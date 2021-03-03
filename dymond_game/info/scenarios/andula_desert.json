@@ -25,9 +25,10 @@
   {
     "1": "res/scenarios/andula_desert/tiles/back_mid.png",
     "2": "res/scenarios/andula_desert/tiles/back_left.png",
-    "3": "res/scenarios/andula_desert/tiles/back_right.png"
+    "3": "res/scenarios/andula_desert/tiles/back_right.png",
+    "4": "res/scenarios/andula_desert/tiles/pole.png"
   },
-  "maps": ["andula_desert_0"],
+  "maps": ["andula_desert_0", "andula_desert_1"],
   "non_collision_group": ["1", "3", "4", "x", "y"],
   "platform_group": ["c", "d", "e"],
   "enemies":

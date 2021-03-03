@@ -90,22 +90,28 @@ class Dynamic(Entity):
         # Gets the list of boxes hit at each moment (can be empty)
         tiles_hit = self.check_coll(tile_list)
         for tile in tiles_hit:
-            if mov[0] > 0:
-                self.box.right = tile.box.left
-                coll_register[0] = True
-            elif mov[0] < 0:
-                self.box.left = tile.box.right
-                coll_register[1] = True
+            if not tile.is_platform:
+                if mov[0] > 0:
+                    self.box.right = tile.box.left
+                    coll_register[0] = True
+                elif mov[0] < 0:
+                    self.box.left = tile.box.right
+                    coll_register[1] = True
         # Management of the y axis
         self.box.y += mov[1]
         tiles_hit = self.check_coll(tile_list)
         for tile in tiles_hit:
-            if mov[1] > 0:
-                self.box.bottom = tile.box.top
-                coll_register[2] = True
-            elif mov[1] < 0:
-                self.box.top = tile.box.bottom
-                coll_register[3] = True
+            if not tile.is_platform:
+                if mov[1] > 0:
+                    self.box.bottom = tile.box.top
+                    coll_register[2] = True
+                elif mov[1] < 0:
+                    self.box.top = tile.box.bottom
+                    coll_register[3] = True
+            else:
+                if mov[1] > 0 and (self.box.bottom - tile.box.top) <= 5:
+                    self.box.bottom = tile.box.top
+                    coll_register[2] = True
         return coll_register
 
     def collision_handler(self, coll):

@@ -26,6 +26,7 @@ class Scenario:
         self.tile_map = []  # Mapa de tiles que tiene el escenario
         self.bkg_tile_map = []  # Tiles de fondo del escenario
         self.non_collision_group = []  # Lista de tiles que no tienen caja de colisiones (en el mapa de tiles normal)
+        self.platform_group = []
         self.tiles = []  # Cajas de colision del escenario
         self.active_tiles = []  # Tiles activos
         self.background = None  # Fondo del escenario
@@ -84,7 +85,7 @@ class Scenario:
             self.bkg_tile_set[tile_id] = tile
         bck_info = map_info["background"]
         self.non_collision_group = map_info["non_collision_group"]
-        game_data.platform_group = map_info["platform_group"]
+        self.platform_group = map_info["platform_group"]
         self.player_spawn = map_info["spawn_point"]
         self.enemies = map_info["enemies"]
         for music_track_path in map_info["music"]:
@@ -126,6 +127,8 @@ class Scenario:
                 if column != '0':
                     new_tile = tile.Tile(column, (x * self.TILE_SIZE[0], y * self.TILE_SIZE[1]),
                                          (self.TILE_SIZE[0], self.TILE_SIZE[1]), False)
+                    if new_tile.t_type in self.platform_group:
+                        new_tile.is_platform = True
                     self.tiles.append(new_tile)
                 x += 1
             y += 1
