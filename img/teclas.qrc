@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="teclas">
+    <file>letra_p.png</file>
     <file>d.png</file>
     <file>s.png</file>
     <file>a.png</file>

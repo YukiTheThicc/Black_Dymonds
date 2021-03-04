@@ -94,7 +94,7 @@ class Enemy_Melee(Dynamic):
             random.choice(game_data.audio[self.type]["death"]).play()
             self.set_action("DYING")
             self.dead = True
-            self.action_timer = 120
+            self.action_timer = 60
 
     def collision_handler(self, coll):
         if coll[0] or coll[1]:

@@ -74,6 +74,50 @@ class Player(Dynamic):
         if self.states["SHOOTING"]:
             self.shoot(proj_list)
 
+    def move(self, tile_list):
+        """
+        Applies the movement to the entity; box_list contains the rects that the entity can physically collide with,
+        meaning that they can't occupy the same space at the same time. It moves the entity on each axis and checks if
+        it collided. If there is a collision, it moves the entity accordingly.
+        :param tile_list:
+        :return:
+        """
+        mov = self.set_movement()
+        # We set up a register to know from which side it collided
+        coll_register = [False, False, False, False]
+        # Management of the x axis first
+        self.box.x += mov[0]
+        # Gets the list of boxes hit at each moment (can be empty)
+        tiles_hit = self.check_coll(tile_list)
+        for tile in tiles_hit:
+            if not tile.is_platform:
+                if mov[0] > 0:
+                    self.box.right = tile.box.left
+                    coll_register[0] = True
+                elif mov[0] < 0:
+                    self.box.left = tile.box.right
+                    coll_register[1] = True
+            if tile.does_damage:
+                self.take_damage(tile.damage)
+        # Management of the y axis
+        self.box.y += mov[1]
+        tiles_hit = self.check_coll(tile_list)
+        for tile in tiles_hit:
+            if not tile.is_platform:
+                if mov[1] > 0:
+                    self.box.bottom = tile.box.top
+                    coll_register[2] = True
+                elif mov[1] < 0:
+                    self.box.top = tile.box.bottom
+                    coll_register[3] = True
+            else:
+                if mov[1] > 0 and (self.box.bottom - tile.box.top) <= 16:
+                    self.box.bottom = tile.box.top
+                    coll_register[2] = True
+            if tile.does_damage:
+                self.take_damage(tile.damage)
+        return coll_register
+
     def idle(self):
         pass
 

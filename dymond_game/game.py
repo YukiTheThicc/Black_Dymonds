@@ -3,7 +3,7 @@ import random
 import time
 import pygame
 
-import main
+import black_dymonds
 import metodos
 from dymond_game import dymond, game_data
 
@@ -27,8 +27,13 @@ class Game:
         self.display = pygame.display.set_mode(game_data.RES)  # Display donde se va a renderizar el frame
         self.frame = pygame.Surface(game_data.FRAME_SIZE)  # Frame donde se va a dibujar
 
+        # Icono de la ventana de pygame y el titulo
+        icon = pygame.image.load("res/icon.png").convert_alpha()
+        pygame.display.set_icon(icon)
+        pygame.display.set_caption('Black Dymonds')
+
         self.previous_frame = None  # Frame anterior (para rellenar el buffer en las escenas)
-        self.scenarios = ["andula_desert"]  # Lista de escenarios
+        self.scenarios = ["andula_desert", "nortovak_mountains"]  # Lista de escenarios
         self.played_scenarios = []  # Escenarios ya jugados
         self.pickable_list = []  # Lista de elementos que se pueden recoger
         self.entity_list = []  # Lista de entidades
@@ -214,6 +219,9 @@ class Game:
             self.display.blit(pygame.transform.scale(self.frame, game_data.RES), (0, 0))
             pygame.display.update()
             self.clock.tick(game_data.CLK_TICKS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.exit_game()
 
     def create_enemy(self, pos: [int, int], e_type):
         """
@@ -255,7 +263,6 @@ class Game:
                     to_y = self.scenario.get_tile_size()[1] * random.randint(0, self.scenario.height)
                     has_box_below = self.scenario.check_collision([to_x, to_y], [32, 32])
                     is_blocked = self.scenario.check_collision([to_x - 16, to_y - 32], [64, 32])
-                    # self.entity_list.append(dymond.create_entity("test_box", to_x, to_y, 32, 32, 0, True, True))
                     if not is_blocked and has_box_below:
                         self.entity_list.append(self.create_enemy((to_x, to_y - 32), new_entity))
                         enemies_to_spawn -= 1
@@ -285,6 +292,12 @@ class Game:
         return scroll
 
     def draw(self):
+        """
+
+        Itera y dibuja las entidades y proyectiles
+
+        :return:
+        """
         scroll = self.scroll(self.player)
         self.scenario.render(self.frame, scroll, self.player)
         for obj in self.entity_list:
@@ -298,6 +311,12 @@ class Game:
                                                   game_data.points, self.player.hp, self.player.max_hp)
 
     def update(self):
+        """
+
+        Itera y actualiza las entidades y proyectiles
+
+        :return:
+        """
         self.player.update(self.player, self.scenario.active_tiles, self.entity_list, self.proj_list,
                            self.pickable_list)
         for proj in self.proj_list:
@@ -310,7 +329,7 @@ class Game:
                             self.pickable_list)
 
     def check_end_level(self):
-        if game_data.killed_enemies == self.number_of_enemies:
+        if game_data.killed_enemies == self.number_of_enemies or self.time_left <= 0:
             self.end_level_transition()
             self.change_map()
 
@@ -324,12 +343,18 @@ class Game:
             if data["puntos"] < game_data.points:
                 metodos.modificar_jugador(game_data.PLAYER_NAME, game_data.points, self.level)
         game_data.FONTS = {}
-        main.abrir_ventana()
+        black_dymonds.abrir_ventana()
         pygame.quit()
         pygame.display.quit()
         gc.collect()
 
     def run(self):
+        """
+
+        Bucle principal del juego
+
+        :return:
+        """
         while self.running:
             start = time.time()
             self.frame.fill((0, 0, 0))

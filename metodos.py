@@ -3,7 +3,7 @@ import time
 
 from PyQt5 import QtSql
 
-from main import *
+from black_dymonds import *
 
 
 def conexion_base_de_datos(name):

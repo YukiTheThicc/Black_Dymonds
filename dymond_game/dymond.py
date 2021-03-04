@@ -17,6 +17,8 @@ from dymond_game import game_data
 def create_variables(player: str, conf: {}):
     """
 
+    Crea las variables globales del juego
+
     :return:
 
     """
@@ -165,6 +167,14 @@ def load_animations(json_path: str):
 
 
 def load_audio(json_path: str):
+    """
+
+    Carga los efectos de sonido de en un diccionario que guarda la raiz del sonido, el evento, y una serie de sonidos
+    que se podran o no seleccionar de forma aleatoria
+
+    :param json_path:
+    :return:
+    """
     audio_data = {}
     f = open(json_path, 'r')
     audio_loader_info = json.load(f)
@@ -208,6 +218,19 @@ def text_data(to_text, font: str, color: str):
 
 def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: float, points: int, player_health: int,
                player_max_hp: int):
+    """
+
+    Metodo que rennderiza la HUD por encima del frame
+
+    :param frame:
+    :param scroll:
+    :param clock:
+    :param time:
+    :param points:
+    :param player_health:
+    :param player_max_hp:
+    :return:
+    """
     fps = str(int(clock.get_fps())) + " FPS"
     if game_data.DEBUG_MODE:
         frame.blit(text_data(fps, "SMALL", "black"), (380, 250))
@@ -226,6 +249,20 @@ def render_hud(frame: pygame.Surface, scroll, clock: pygame.time.Clock, time: fl
 
 def render_frame(display: pygame.display, frame: pygame.Surface, scroll, clock: pygame.time.Clock, time, points: int,
                  player_health: int, player_max_hp):
+    """
+
+    Renderiza el frame despues de apicarle el HUD
+
+    :param display:
+    :param frame:
+    :param scroll:
+    :param clock:
+    :param time:
+    :param points:
+    :param player_health:
+    :param player_max_hp:
+    :return:
+    """
     render_hud(frame, scroll, clock, time, points, player_health, player_max_hp)
     display.blit(pygame.transform.scale(frame, game_data.RES), (0, 0))
     pygame.display.update()

@@ -17,6 +17,7 @@
     "c": "res/scenarios/nortovak_mountains/tiles/plat_mid.png",
     "d": "res/scenarios/nortovak_mountains/tiles/plat_left.png",
     "e": "res/scenarios/nortovak_mountains/tiles/plat_right.png",
+    "f": "res/scenarios/common/tiles/b_wire.png",
     "w": "res/scenarios/common/tiles/i_wall.png",
     "x": "res/scenarios/common/tiles/minen_left.png",
     "y": "res/scenarios/common/tiles/minen_right.png"
@@ -26,9 +27,10 @@
     "1": "res/scenarios/nortovak_mountains/tiles/back_mid.png",
     "2": "res/scenarios/nortovak_mountains/tiles/back_left.png",
     "3": "res/scenarios/nortovak_mountains/tiles/back_right.png",
-    "4": "res/scenarios/nortovak_mountains/tiles/pole.png"
+    "4": "res/scenarios/nortovak_mountains/tiles/pole.png",
+    "5": "res/scenarios/nortovak_mountains/tiles/back_pole.png"
   },
-  "maps": ["nortovak_mountains_0", "nortovak_mountains_0"],
+  "maps": ["nortovak_mountains_0", "nortovak_mountains_1", "nortovak_mountains_2", "nortovak_mountains_3", "nortovak_mountains_4"],
   "non_collision_group": ["1", "3", "4", "x", "y"],
   "platform_group": ["c", "d", "e"],
   "enemies":
